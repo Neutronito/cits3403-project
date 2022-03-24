@@ -5,4 +5,8 @@ counter = Blueprint('counter', __name__)
 
 @counter.route('/')
 def homepage():  # put application's code here
-    return render_template('counter.html')
+    return render_template('homepage.html')
+
+@counter.route('/login')
+def login(): 
+    return render_template('login.html')

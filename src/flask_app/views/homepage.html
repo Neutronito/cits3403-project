@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Button Pushing Page</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="static/css/style.css">
+
+        <!-- Bootrsap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+        <!-- JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+        <!-- My own JS  -->
+        <script type="text/javascript" src="static/js/code.js"></script>
+        
+    </head>
+
+    <body onload="refreshCounter()">
+        <!-- Navbar -->
+        <nav class="navbar navbar-nav navbar-expand-lg navbar-light bg-light">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Homepage</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/login">Login</a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+
+        <!-- Standard explanation text with heading -->
+        <div class="container-sm">
+            <div class="text-center">
+                <h1 class="standardText heading">
+                    Welcome to the Button Pushing Homepage!
+                </h1>
+            </div>
+            <div class="col-lg-8 offset-lg-2">
+                <p class="standardText">
+                    This is a website we have created to develop our website development abilities.
+                    Its purpose is to allow the user to press the button on screen as many times as 
+                    they want, and have the number of presses recorded. Additionally, they will have
+                    the ability to create an account with an associated username and password. The 
+                    user will then be able to log into this account and record how many times they
+                    have pressed the button since the account creation. The idea behind is that we
+                    will have to create a back-end process that will recieve the number of times 
+                    you press the button in one sitting and store this number, which you can then
+                    view after you login. This site will also have a leaderboard to see who
+                    has pressed the most times.
+                </p>
+            </div>
+        </div>
+
+        <!-- Clicking Button -->
+        <div class="container">
+            <button type="button" onclick="incrementCounter()" class="standardButton btn btn-primary btn-lg col-lg-8 offset-lg-2">Push Me!!</button>
+            <div class="col-lg-8 offset-lg-2 text-center">
+              <h2 id = clickCount class="standardText heading"></h2>  
+            </div>
+            <button type="button" onclick="decrementCounter()" class="standardButton btn btn-warning btn-lg col-lg-8 offset-lg-2">Decrement the Pushed Count!</button>
+            
+            <div class="btn-group col-lg-8 offset-lg-2" role="group" aria-label="Basic example">
+              <button type="button" onclick="zeroCounter()" class="standardButton btn btn-danger btn-lg">Reset the Pushed Count!</button>              
+              <button type="button" onclick="submitCounter()" class="standardButton btn btn-success btn-lg">Submit the Pushed Count!</button>
+            </div>
+            
+          </div>
+    </body>
+</html>

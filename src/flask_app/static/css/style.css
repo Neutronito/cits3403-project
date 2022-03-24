@@ -1,0 +1,50 @@
+.standardText {
+    font-family: Helvetica
+}
+
+.heading {
+    font-weight: bold;
+}
+
+.navbar-nav {
+    float:none;
+    margin:0 auto;
+    display: block;
+    text-align: center;
+}
+
+
+input[type=text], input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 2px solid rgba(53, 11, 206);
+    box-sizing: border-box;
+    font-family: Helvetica;
+    border-radius: 15px;
+}
+
+label.labelStyling{
+    text-align: center;
+    width: 100%;
+}
+
+button:hover {
+    opacity: 0.5;
+  }
+
+button.submitButton {
+    background-color: rgb(53, 11, 206);
+    color: rgb(255, 251, 0);
+    padding: 12px 20px;
+    width: 100%;
+    border: none;
+    font-family: Helvetica;
+    border-radius: 15px;
+}
+
+button.standardButton {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
