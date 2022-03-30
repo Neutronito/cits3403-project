@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import sqlite3
 
+
 class AbstractCountModel(ABC):
     @abstractmethod
     def get_count(self, user_id: str) -> int: ...
@@ -22,6 +23,7 @@ class AbstractCountModel(ABC):
 
     @abstractmethod
     def close(self) -> None: ...
+
 
 class CountModelException(Exception):
     pass
@@ -49,36 +51,13 @@ class SqliteCountModel(AbstractCountModel):
         cursor.execute(sql_create_table)
 
     def get_count(self, user_id: str) -> int:
-<<<<<<< HEAD
-        con = sqlite3.connect(self.dbpath)
-        cur = con.cursor()
-<<<<<<< HEAD
-        cur.execute("SELECT counter FROM loginsData WHERE username =:user", {"user" : user_id})
-        a = cur.fetchone()[0]
-        print(a)
-=======
-        cur.execute('SELECT counter FROM loginsData WHERE username=?', (user_id, ))
-        a = cur.fetchone()
-
->>>>>>> b905343 (cur.execute("SELECT counter FROM loginsData WHERE username =:user", {"user" : user_id}))
-        con.close()
-=======
         cur = self.connection.cursor()
-<<<<<<< HEAD
-        try:
-            cur.execute("SELECT counter FROM loginsData WHERE username =:user", {"user" : user_id})
-        except sqlite3.Error:
-            raise UserCountNotFoundException
-        a = cur.fetchone()[0]
->>>>>>> 998ce7c (lots of fixes)
-        return a
-=======
         cur.execute("SELECT counter FROM loginsData WHERE username =:user", {"user" : user_id})
         a = cur.fetchone()
         if(a != None):
             return a[0]
-        else: raise UserCountNotFoundException(user_id=user_id)
->>>>>>> e84800f (resolve issues)
+        else:
+            raise UserCountNotFoundException(user_id=user_id)
 
     def increment_count(self, user_id: str) -> None: 
         cur = self.connection.cursor()
@@ -110,3 +89,45 @@ class SqliteCountModel(AbstractCountModel):
       
     def close(self) -> None:
         self.connection.close()
+
+
+class DictCountModel(AbstractCountModel):
+    def __init__(self):
+        self.dict = dict()
+
+    def get_count(self, user_id: str) -> int:
+        try:
+            return self.dict[user_id]
+        except KeyError:
+            raise UserCountNotFoundException(user_id=user_id)
+
+    def increment_count(self, user_id: str) -> None:
+        try:
+            self.dict[user_id] += 1
+        except KeyError:
+            raise UserCountNotFoundException(user_id=user_id)
+
+    def decrement_count(self, user_id: str) -> None:
+        try:
+            self.dict[user_id] -= 1
+        except KeyError:
+            raise UserCountNotFoundException(user_id=user_id)
+
+    def reset_count(self, user_id: str) -> None:
+        if user_id not in self.dict:
+            raise UserCountNotFoundException(user_id=user_id)
+        self.dict[user_id] = 0
+
+    def add_user(self, user_id: str) -> None:
+        if user_id in self.dict:
+            raise UserCountAlreadyExistException(user_id=user_id)
+        self.dict[user_id] = 0
+
+    def remove_user(self, user_id: str) -> None:
+        if user_id not in self.dict:
+            raise UserCountNotFoundException(user_id=user_id)
+        del self.dict[user_id]
+
+    def close(self) -> None:
+        pass
+
