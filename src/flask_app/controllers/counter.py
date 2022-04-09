@@ -47,9 +47,8 @@ def count_endpoint(user_id: str):
             })
 
         elif request.method == 'PUT':
-            args = request.args
-            action = args.get('action')
-            amount = int(args.get('amount', 1))
+            action = request.args.get('action')
+            amount = int(request.args.get('amount', 1))
             if action == 'increment':
                 for _ in range(amount):
                     count_model.increment_count(user_id=user_id)

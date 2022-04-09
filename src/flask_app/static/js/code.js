@@ -1,4 +1,18 @@
 let count = 0;
+let username = null;
+
+function api_call(myData, getRoute, request_type) {
+    
+    try{
+      $.ajax({
+        url: getRoute + username + '?' + jQuery.param(myData),
+        type: request_type,
+      })
+    }
+    catch (ex){
+      alert(ex);
+    }
+  }
 
 // Refreshes the counter display
 function refreshCounter(){
@@ -17,7 +31,6 @@ function decrementCounter() {
         refreshCounter();
     }
 }
-
 // Zeros the count value
 function zeroCounter() {
     count = 0;
@@ -25,16 +38,30 @@ function zeroCounter() {
 }
 
 // Submits the count value and then returns it
-function submitCounter() {
-    alert("Your count of " + count + " has been submitted!")
-    zeroCounter();
+function submitCounter() {   
+    var getRoute = '/api/v1/count/';
+    if(count >= 0){
+        var action = 'increment';        
+    }
+    else{
+        var action = 'decrement';
+    }
+    var myData = {
+        'action': action,
+        'amount': count
+    }; 
+    api_call(myData, getRoute,'PUT');
 }
 
 // Called when the user hits submit on the login page
 function submitClicked() {
-    let uname = getInputString('unameInput');
+    username = getInputString('unameInput');
     let pwr = getInputString('pwrInput');
-    document.getElementById("displayLogin").innerHTML = "Your username is " + uname + " and your password is " + pwr + "!";
+    getRoute = "/api/v1/user/";
+    api_call(null, getRoute, 'POST');
+    var a = api_call(null, getRoute,  'GET');
+    count = a["count"];
+    document.getElementById("displayLogin").innerHTML = "Your username is " + username + " and your password is " + pwr + "!";
 }
 
 // Returns the contens of the input which is identified through the given id
