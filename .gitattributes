@@ -1,1 +1,4 @@
 poetry.lock binary
+src/flask_app/static/js/bootstrap.bundle.min.js binary
+src/flask_app/static/css/bootstrap.min.css binary
+src/flask_app/static/js/jquery.min.js binary

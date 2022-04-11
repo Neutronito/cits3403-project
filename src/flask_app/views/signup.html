@@ -5,13 +5,12 @@
 <div class="container-sm">
     <div class="text-center">
         <h1 class="standardText heading">
-            Welcome to the Login Page!
+            Welcome to the Signup Page!
         </h1>
     </div>
     <div class="col-lg-8 offset-lg-2">
         <p class="standardText">
-            Please enter your username and password to login and see your account activity and
-            information. If you do not have an account, press create new account.
+            Please register yourself
         </p>
     </div>
 </div>
@@ -38,9 +37,22 @@
                 <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>
-            <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+            <p>
+                <b>{{ form.confirm.label(class="labelStyling") }}</b><br>
+                {{ form.confirm(size=512,  placeholder="Please re-enter your password") }}
+                {% for error in form.confirm.errors %}
+                <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.accept_tos }} I accept the <a href="{{ url_for('counter.tos') }}"> terms of service</a>
+                {% for error in form.accept_tos.errors %}
+                <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+            </p>
             <p>{{ form.submit(class="submitButton") }}</p>
         </form>
+
     </div>
 </div>
 {% endblock %}

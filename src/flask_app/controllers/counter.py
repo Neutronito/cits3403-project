@@ -1,18 +1,12 @@
-from typing import ContextManager
-from contextlib import contextmanager
+import functools
+from http import HTTPStatus
 
-from flask import Blueprint, render_template, current_app, request, jsonify
-from flask_app.models.count import SqliteCountModel, AbstractCountModel
+from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for, abort
+from flask_login import current_user, login_user, login_required, logout_user
+
+from flask_app.forms import LoginForm, SignupForm
+
 counter = Blueprint('counter', __name__)
-
-
-@contextmanager
-def get_count_model() -> ContextManager[AbstractCountModel]:
-    count_model = SqliteCountModel(dpath=current_app.config['dpath'])
-    try:
-        yield count_model
-    finally:
-        count_model.close()
 
 
 @counter.route('/')
@@ -20,52 +14,147 @@ def homepage():  # put application's code here
     return render_template('homepage.html')
 
 
-@counter.route('/login')
-def login(): 
-    return render_template('login.html')
+@counter.route('/login',  methods=['GET', 'POST'])
+def login():
+    # https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-v-user-logins
+    # https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-iii-web-forms
+    from flask_app.models.count import User
+    if current_user.is_authenticated:
+        return redirect(url_for('counter.homepage'))
+
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(name=form.username.data).first()
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid username or password')
+            return redirect(url_for('counter.login'))
+
+        login_user(user, remember=form.remember_me.data)
+        flash('successful login')
+        if user.admin:
+            return redirect(url_for('counter.admin'))
+        else:
+            return redirect(url_for('counter.game'))
+
+    return render_template('login.html', form=form)
 
 
-@counter.route('/api/v1/user/<user_id>', methods=['POST', 'DELETE'])
+@counter.route('/signup',  methods=['GET', 'POST'])
+def signup():
+
+    if current_user.is_authenticated:
+        return redirect(url_for('counter.homepage'))
+
+    form = SignupForm()
+
+    if form.validate_on_submit():
+        from flask_app.models.count import User, Count
+        from flask_app import db
+        user = User(name=form.username.data, password=form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        count = Count(username=user.name)
+        db.session.add(count)
+        db.session.commit()
+        flash("Thank you")
+        return redirect(url_for('counter.login'))
+
+    return render_template('signup.html', form=form)
+
+
+@counter.route("/logout", methods=["GET"])
+@login_required
+def logout():
+    logout_user()
+    flash("logged out")
+    return redirect(url_for('counter.homepage'))
+
+
+@counter.route("/tos", methods=["GET"])
+def tos():
+    return render_template('tos.html')
+
+
+@counter.route("/game", methods=["GET"])
+@login_required
+def game():
+    return render_template('game.html')
+
+
+def check_admin():
+    if not current_user.admin:
+        abort(HTTPStatus.UNAUTHORIZED)
+
+
+def admin_required(func):
+    @functools.wraps(func)
+    def decorated_view(*args, **kwargs):
+        check_admin()
+        return func(*args, **kwargs)
+    return decorated_view
+
+
+@counter.route("/admin", methods=["GET"])
+@login_required
+@admin_required
+def admin():
+    return render_template('admin.html')
+
+
+@counter.route('/api/v1/user/<user_id>', methods=['DELETE'])
+@login_required
+@admin_required
 def user_endpoint(user_id: str):
-    with get_count_model() as count_model:
-        if request.method == 'POST':
-            count_model.add_user(user_id=user_id)
+    from flask_app.models.count import User
+    from flask_app import db
+    user = User.query.get(user_id)
+    if request.method == 'DELETE':
+        db.session.delete(user)
+        db.session.commit()
+        return "user has been deleted", 200
+
+
+@counter.route('/api/v1/count', methods=['GET', 'POST', 'DELETE'])
+@login_required
+def count_endpoint():
+    from flask_app import db
+    from flask_app.models.count import User
+    args = request.args
+
+    if current_user.admin and 'user' in args:
+        count_row = User.query.get(args['user'])
+    else:
+        count_row = current_user.count
+
+    if request.method == 'GET':
+        return jsonify({
+            "count": count_row.count
+        })
+
+    elif request.method == 'POST':
+        action = args.get('action')
+        amount = int(args.get('amount', 1))
+        if action == 'increment':
+            count_row.count += amount
+        elif action == 'decrement':
+            count_row.count -= amount
+        else:
             return jsonify({
-                "count": 0
-            })
-        elif request.method == 'DELETE':
-            count_model.remove_user(user_id=user_id)
-            return "user has been deleted", 200
+                "error": "please choose either 'increment' or 'decrement' in the 'action' parameter"
+            }), 400
 
+        db.session.add(count_row)
+        db.session.commit()
 
-@counter.route('/api/v1/count/<user_id>', methods=['GET', 'PUT', 'DELETE'])
-def count_endpoint(user_id: str):
-    with get_count_model() as count_model:
-        if request.method == 'GET':
-            return jsonify({
-                "count": count_model.get_count(user_id=user_id)
-            })
+        return jsonify({
+            "count": count_row.count
+        })
 
-        elif request.method == 'PUT':
-            action = request.args.get('action')
-            amount = int(request.args.get('amount', 1))
-            if action == 'increment':
-                for _ in range(amount):
-                    count_model.increment_count(user_id=user_id)
-            elif action == 'decrement':
-                for _ in range(amount):
-                    count_model.decrement_count(user_id=user_id)
-            else:
-                return jsonify({
-                    "error": "please choose either 'increment' or 'decrement' in the 'action' parameter"
-                }), 400
-
-            return jsonify({
-                "count": count_model.get_count(user_id=user_id)
-            })
-
-        elif request.method == 'DELETE':
-            count_model.reset_count(user_id=user_id)
-            return jsonify({
-                "count": 0
-            })
+    elif request.method == 'DELETE':
+        count_row.count = 0
+        db.session.add(count_row)
+        db.session.commit()
+        return jsonify({
+            "count": 0
+        })

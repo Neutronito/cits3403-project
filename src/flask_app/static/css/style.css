@@ -30,11 +30,11 @@ label.labelStyling{
     width: 100%;
 }
 
-button:hover {
+.submitButton:hover {
     opacity: 0.5;
   }
 
-button.submitButton {
+.submitButton {
     background-color: rgb(53, 11, 206);
     color: rgb(255, 251, 0);
     padding: 12px 20px;
@@ -44,7 +44,7 @@ button.submitButton {
     border-radius: 15px;
 }
 
-button.standardButton {
+.standardButton {
     margin-top: 15px;
     margin-bottom: 15px;
 }
