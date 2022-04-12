@@ -1,0 +1,71 @@
+stages:
+  - build
+  - deploy
+
+docker-build:
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  variables:
+    DOCKER_BUILDKIT: 1
+  script:
+    - tag=":$CI_COMMIT_BRANCH"
+    - docker pull "$CI_REGISTRY_IMAGE${tag}"
+    - docker build --cache-from "$CI_REGISTRY_IMAGE${tag}" --pull -t "$CI_REGISTRY_IMAGE${tag}" .
+    - docker push "$CI_REGISTRY_IMAGE${tag}"
+
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      exists:
+        - Dockerfile
+
+.alpine ssh:
+  image: alpine
+  before_script:
+    - apk add --update openssl openssh
+    - eval $(ssh-agent -s)
+    - echo $SSH_PRIVATE_KEY | openssl enc -a -A -d | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $WEBSITE_DOMAIN >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - alias sshss='ssh gitlab@$WEBSITE_DOMAIN'
+
+deploy_branch:
+  extends: .alpine ssh
+  stage: deploy
+  script:
+    - sshss "docker stop cits3403-project-$CI_COMMIT_BRANCH" || true
+    - sshss "
+        docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH &&
+        docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH &&
+        docker run 
+          --rm 
+          -e SCRIPT_NAME=/app/$CI_COMMIT_BRANCH 
+          -v /var/tmp/flask:/app 
+          --name cits3403-project-$CI_COMMIT_BRANCH
+          -dt $CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH --bind unix:/app/$CI_COMMIT_BRANCH.socket --log-level=debug"
+
+  environment:
+    name: branch/$CI_COMMIT_BRANCH
+    url: https://$WEBSITE_DOMAIN/app/$CI_COMMIT_BRANCH
+    on_stop: stop_branch
+  rules:
+    - if: $CI_COMMIT_BRANCH
+
+
+stop_branch:
+  extends: .alpine ssh
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - sshss "docker stop cits3403-project-$CI_COMMIT_BRANCH"
+
+  environment:
+    name: branch/$CI_COMMIT_BRANCH
+    action: stop
+  when: manual

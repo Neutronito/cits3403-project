@@ -1,10 +1,10 @@
-let global_count = 0;
-let count = 0;
+global_count = 0;
+count = 0;
 
 function api_call(myData, getRoute, request_type) {
 
   return $.ajax({
-      url: getRoute + "?" + jQuery.param(myData),
+      url: base_path + getRoute + "?" + jQuery.param(myData),
       type: request_type,
       success: function(d) {
           global_count = d["count"];

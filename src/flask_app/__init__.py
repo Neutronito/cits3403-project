@@ -43,6 +43,19 @@ def create_app():
     return app
 
 
+def production():
+    import subprocess
+    import signal
+    import sys
+    other_args = sys.argv[1:]
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+    load_dotenv(os.path.join(basedir, '.flaskenv'))
+    my_env = os.environ.copy()
+    my_env['FLASK_APP'] = basedir
+    my_env['FLASK_ENV'] = 'production'
+    subprocess.run(['gunicorn', 'flask_app:create_app()'] + other_args, env=my_env)
+
+
 def shell():
     import subprocess
     import signal
