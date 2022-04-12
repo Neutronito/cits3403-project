@@ -13,8 +13,7 @@ docker-build:
     DOCKER_BUILDKIT: 1
   script:
     - tag=":$CI_COMMIT_BRANCH"
-    - docker pull "$CI_REGISTRY_IMAGE${tag}"
-    - docker build --cache-from "$CI_REGISTRY_IMAGE${tag}" --pull -t "$CI_REGISTRY_IMAGE${tag}" .
+    - docker build --pull -t "$CI_REGISTRY_IMAGE${tag}" .
     - docker push "$CI_REGISTRY_IMAGE${tag}"
 
   rules:
@@ -40,7 +39,7 @@ deploy_branch:
   script:
     - sshss "docker stop cits3403-project-$CI_COMMIT_BRANCH" || true
     - sshss "
-        docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH &&
+        (docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH || true) &&
         docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH &&
         docker run 
           --rm 
