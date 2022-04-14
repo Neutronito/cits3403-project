@@ -58,7 +58,10 @@ def signup():
         db.session.add(count)
         db.session.commit()
         flash("Thank you")
-        return redirect(url_for('counter.login'))
+
+        #Log the user in 
+        login_user(user)
+        return redirect(url_for('counter.game'))
 
     return render_template('signup.html', form=form)
 
