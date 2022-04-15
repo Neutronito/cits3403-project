@@ -21,7 +21,7 @@ class SignupForm(FlaskForm):
     submit = SubmitField('Signup')
 
     def validate_username(self, username):
-        from flask_app.models.count import User
+        from flask_app.auth.models import User
         user = User.query.filter_by(name=username.data).first()
         if user is not None:
             raise validators.ValidationError('Please use a different username.')

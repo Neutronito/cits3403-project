@@ -1,4 +1,4 @@
-from .. import db
+from flask_app import db
 from flask_scrypt import generate_password_hash, generate_random_salt, check_password_hash
 
 
@@ -37,13 +37,3 @@ class User(db.Model):
         return check_password_hash(password, self.password_hash, self.password_salt)
 
 
-class Count(db.Model):
-    __tablename__ = 'count'
-    
-    username = db.Column(db.String, db.ForeignKey('user.name'), primary_key=True)
-    count = db.Column(db.Integer)
-    user = db.relationship("User", back_populates='count', cascade="delete, merge, save-update")
-
-    def __init__(self, username: str, count: int = 0) -> None:
-        self.username = username
-        self.count = count

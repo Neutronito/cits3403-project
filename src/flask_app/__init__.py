@@ -4,19 +4,24 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy, inspect
 from flask_login import LoginManager
-from flask_app.controllers.counter import counter
 
+from flask_app.home.controller import home
+from flask_app.auth.controller import auth
+from flask_app.admin.controller import admin
+from flask_app.leaderboard.controller import leaderboard
+from flask_app.game.controller import game
 
 basedir = os.path.dirname(__file__)
 db = SQLAlchemy()
 login_manager = LoginManager()
 
-from flask_app.models import count
+from flask_app.auth import models as auth_models
+from flask_app.game import models as game_models
 
 
 @login_manager.user_loader
 def user_loader(user_id):
-    return db.session.get(count.User, user_id)
+    return db.session.get(auth_models.User, user_id)
 
 
 def model_exists(model_class):
@@ -25,16 +30,21 @@ def model_exists(model_class):
 
 
 def create_app():
-    app = Flask(__name__, template_folder='views', static_folder='static')
-    app.register_blueprint(counter)
+    app = Flask(__name__, static_folder='static', template_folder='views')
     app.config.from_pyfile('settings.py')
+
+    app.register_blueprint(home, url_prefix='/')
+    app.register_blueprint(auth, url_prefix='/auth')
+    app.register_blueprint(admin, url_prefix='/admin')
+    app.register_blueprint(leaderboard, url_prefix='/leaderboard')
+    app.register_blueprint(game, url_prefix='/game')
 
     db.init_app(app)
     login_manager.init_app(app)
 
     with app.app_context():
         inspector = inspect(db.engine)
-        first_time_create_admin = not inspector.has_table(count.User.__tablename__)
+        first_time_create_admin = not inspector.has_table(auth_models.User.__tablename__)
     db.create_all(app=app)
     if first_time_create_admin:
         with app.app_context():
@@ -67,11 +77,11 @@ def shell():
 
 
 def create_admin_func(username, password):
-    user = count.User(name=username, password=password, admin=True)
+    user = auth_models.User(name=username, password=password, admin=True)
     user.set_password(password)
     db.session.add(user)
     db.session.commit()
-    count_r = count.Count(username=username)
+    count_r = game_models.Count(username=username)
     db.session.add(count_r)
     db.session.commit()
 

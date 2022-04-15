@@ -45,7 +45,7 @@
                 {% endfor %}
             </p>
             <p>
-                {{ form.accept_tos }} I accept the <a href="{{ url_for('counter.tos') }}"> terms of service</a>
+                {{ form.accept_tos }} I accept the <a href="{{ url_for('auth.tos') }}"> terms of service</a>
                 {% for error in form.accept_tos.errors %}
                 <span style="color: red;">{{ error }}</span>
                 {% endfor %}

@@ -2,7 +2,6 @@ global_count = 0;
 count = 0;
 
 function api_call(myData, getRoute, request_type) {
-
   return $.ajax({
       url: base_path + getRoute + "?" + jQuery.param(myData),
       type: request_type,
@@ -36,7 +35,7 @@ function zeroCounter() {
 
 function resetCounter() {
     count = 0;
-    api_call(null, '/api/v1/count', 'DELETE');
+    api_call(null, '/game/api/count', 'DELETE');
 }
 
 // Submits the count value and then returns it
@@ -51,9 +50,9 @@ function submitCounter() {
         'action': action,
         'amount': Math.abs(count),
     };
-    api_call(myData, '/api/v1/count', 'POST');
+    api_call(myData, '/game/api/count', 'POST');
 }
 
 function fetchCount() {
-    api_call(null, '/api/v1/count', 'GET');
+    api_call(null, '/game/api/count', 'GET');
 }

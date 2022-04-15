@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block header %}
+<script type="text/javascript" src="{{ url_for('game.static', filename='js/code.js') }}"></script>
+{% endblock %}
+
 {% block content %}
 <!-- Standard explanation text with heading -->
 <div class="container-sm">
