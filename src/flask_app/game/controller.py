@@ -33,7 +33,8 @@ def count_endpoint():
     args = request.args
 
     if current_user.admin and 'user' in args:
-        count_row = User.query.get(args['user'])
+        count_row = User.query.get(args['user']).count
+        
     else:
         count_row = current_user.count
 
