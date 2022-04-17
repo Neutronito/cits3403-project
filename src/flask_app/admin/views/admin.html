@@ -1,7 +1,69 @@
 {% extends "base.html" %}
 
+{% block header %}
+<!-- Import JS -->
+<script type="text/javascript" src="{{ url_for('admin.static', filename='js/code.js') }}"></script>
+
+<!-- Import CSS -->
+<link rel="stylesheet" href="{{ url_for('admin.static', filename='css/style.css') }}">
+{% endblock %}
+
 {% block content %}
-<!-- Standard explanation text with heading -->
-yo admin
+<!-- Page heading and description -->
+<div class="container-sm">
+    <h1 class="standardText heading text-center">
+        Welcome to the Admin Page!
+    </h1>
+    <!-- Refresh the list of users button -->
+    <div class="col-lg-8 offset-lg-2 borderedDiv">
+        <h3 class="standardText heading text-center">
+            List of all users
+        </h3>
+        <button type="button" onclick="refreshUserList()" class="btn btn-info btn-lg col-lg-8 offset-lg-2">Refresh User List</button>
+    <!-- List of all user section -->
+        <ul id="userList" class="scrollableList">
+        </ul>
+    </div>
+    <!-- Active user section -->
+    <div class="col-lg-8 offset-lg-2 borderedDiv">
+        <h3 class="standardText heading text-center">
+            Selected User Information
+        </h3>
+        <table id="activeUserTable" class="userDetails">
+            <tr>
+                <th class="currentUser">User Name</th>
+                <th class="count">Count</th>
+                <th class="adminStatus">Admin Status</th>
+            </tr>
+            <tr>
+                <td id="currentUser"></td>
+                <td id="count"></td>
+                <td id="adminStatus"></td>
+            </tr>
+        </table>
+    </div>
+    <!-- Change count section -->
+    <div class="col-lg-8 offset-lg-2 borderedDiv">
+        <h3 class="standardText heading text-center">
+            Change Selected User Count
+        </h3>
+        <div class="btn-group col-12">
+            <button type="button" onclick="modifyUserCount()" class="btn btn-success btn-lg inlineButton">Submit Count</button>
+            <input type="text" id="countForm" name="count" placeholder="Input count" class="inlineForm"><br>
+        </div>
+    </div>
+    <!-- Change users admin status section -->
+    <div class="col-lg-8 offset-lg-2 borderedDiv">
+        <h3 class="standardText heading text-center">
+            Change Selected User Admin Status
+        </h3>
+    <div>
+    <button id="adminButton" type="button" onclick="changeUserAdmin()" class="btn btn-warning btn-lg col-lg-8 offset-lg-2"></button>
+</div>
+
+<!-- Body onload -->
+<script>
+    bodyOnload();
+</script>
 
 {% endblock %}

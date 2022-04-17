@@ -1,0 +1,46 @@
+
+ul.scrollableList {
+    overflow: scroll;
+    max-height: 20vh;
+    margin-top: 2vh;
+}
+
+table.userDetails {
+    border: 1px solid;
+    text-align: center;
+    width: 100%;   
+}
+
+table.userDetails th, table.userDetails td {
+    border: 1px solid #666;
+    border-collapse: collapse;
+}
+
+th.currentUser {
+    width: 60%;
+}
+
+th.count {
+    width: 20%;
+}
+
+th.adminStatus {
+    width: 20%;
+}
+
+button.inlineButton {
+    margin-right: 2vh;
+    width: 24vh;
+    
+}
+
+input.inlineForm {
+    display: inline-block;
+}
+
+div.borderedDiv {
+    border: solid 2px blue;
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+    padding: 2vh;
+}
