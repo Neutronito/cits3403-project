@@ -1,7 +1,19 @@
 {% extends "base.html" %}
-
+{% block header %}
+<script type="text/javascript" src="{{ url_for('leaderboard.static', filename='js/leaderboard.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('leaderboard.static', filename='css/leaderboard.css') }}">
+{% endblock %}
 {% block content %}
-<div class="container-sm">
-    <h1>yo leaderboard </h1>
+<div class = "container-sm">
+    <table>
+        <thead>
+            <tr>
+                <th>Username </th>
+                <th onclick="sortData('count')">Count </th>
+            </tr>
+        </thead>
+
+        <tbody id="tableData"></tbody>
+    </table>
 </div>
 {% endblock %}
