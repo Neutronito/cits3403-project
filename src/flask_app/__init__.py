@@ -76,7 +76,14 @@ def shell():
     subprocess.run(['flask', 'shell'], env=my_env)
 
 
-def create_admin_func(username, password):
+def create_admin_func(username, password) -> bool:
+    from flask_app.auth.models import User
+    
+    check_user = User.query.filter_by(name=username).first()
+    
+    if check_user is not None:
+        return False
+    
     user = auth_models.User(name=username, password=password, admin=True)
     user.set_password(password)
     db.session.add(user)
@@ -85,16 +92,26 @@ def create_admin_func(username, password):
     db.session.add(count_r)
     db.session.commit()
 
+    return True
+
 
 def create_admin() -> int:
     from getpass import getpass
+    import sys
+
     username = input("Enter username: ")
     password = getpass("Enter password: ")
     app = create_app()
+
+    return_status = False
     with app.app_context():
-        create_admin_func(username, password)
-    print("admin account has been created")
-    return 0
+        return_status = create_admin_func(username, password)
+    if return_status:
+        print("admin account has been created")
+        return 0
+    else:
+        print("that username was taken, please choose another username", file=sys.stderr)
+        return 1
 
 
 def main() -> int:
