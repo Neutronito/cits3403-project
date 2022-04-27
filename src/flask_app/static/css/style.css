@@ -6,14 +6,6 @@
     font-weight: bold;
 }
 
-.navbar-nav {
-    float:none;
-    margin:0 auto;
-    display: block;
-    text-align: center;
-}
-
-
 input[type=text], input[type=password] {
     width: 100%;
     padding: 12px 20px;
@@ -23,6 +15,21 @@ input[type=text], input[type=password] {
     box-sizing: border-box;
     font-family: Helvetica;
     border-radius: 15px;
+}
+
+
+.navbar-nav {
+    float:none;
+    margin:0 auto;
+    display: block;
+    text-align: center;
+}
+
+
+#userIcon{
+    position: relative;
+    margin-right: 30px;
+    margin-top: 0px;
 }
 
 label.labelStyling{
