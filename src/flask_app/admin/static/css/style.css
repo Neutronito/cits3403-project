@@ -44,3 +44,17 @@ div.borderedDiv {
     margin-bottom: 1vh;
     padding: 2vh;
 }
+
+table.standardTable {
+    width: 100%;
+
+}
+
+table, th, td {
+    border: 2px solid black;
+}
+
+th, td {
+    text-align: center;
+    vertical-align: middle;
+}

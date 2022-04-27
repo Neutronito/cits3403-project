@@ -1,7 +1,7 @@
 import functools
 from http import HTTPStatus
 
-from flask import Blueprint, render_template, flash, redirect, url_for, abort
+from flask import Blueprint, render_template, flash, redirect, url_for, abort, request
 from flask_login import current_user, login_user, login_required, logout_user
 
 from flask_app.auth.forms import LoginForm, SignupForm
@@ -86,3 +86,17 @@ def admin_required(func):
         check_admin()
         return func(*args, **kwargs)
     return decorated_view
+
+
+@auth.route('/api/user/<user_id>', methods=['DELETE'])
+@login_required
+@admin_required
+def user_endpoint(user_id: str):
+    from flask_app.auth.models import User
+    from flask_app import db
+    user = User.query.get(user_id)
+    if request.method == 'DELETE':
+        db.session.delete(user)
+        db.session.commit()
+        return "user has been deleted", 200
+

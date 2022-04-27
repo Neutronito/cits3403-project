@@ -1,168 +1,195 @@
-let clickedUser = null; //The <li> element that has been clicked last
-let activeUser = null; //The active user (the user currently in focus)
-let setAdminStatus = null; //The boolean which the new admin status will be of the activeUser
-
-function refreshUserList() {
-    //First clear the list
+function initTable() {
     var xhttp = new XMLHttpRequest
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            let list = document.getElementById("userList");
-            //First clear the list
-            while (list.firstChild) {
-                list.removeChild(list.lastChild);
-            }
-            //Now add all our obtained users to the list 
+            let adminTable = document.getElementById("adminTable");
+
+            //Now add all our obtained users to the table 
             const userList = JSON.parse(this.responseText).user_list
 
-            userList.forEach(function(currentValue) {
-                listElement = document.createElement("li");
-                listElement.innerHTML = currentValue;
-                listElement.addEventListener("click", userListItemClick);
-                list.appendChild(listElement);
-            })
+            userList.forEach((element) => {
+                //Create a new row
+                let newRow = document.createElement("tr");
+                newRow.setAttribute('cits3403-user', element)
+                //Add the name colummn ~~~~~~~~~~~~~~~~~~
+                let nameColumn = document.createElement("td");
+                nameColumn.innerHTML = element;
+                newRow.appendChild(nameColumn);
 
-            clickedUser = list.firstChild;
-            list.firstChild.click();
-            
+                //Add the count ~~~~~~~~~~~~~~~~~~
+                let countInput = document.createElement("input");
+                let countDiv = document.createElement("div");
+                let countCell  = document.createElement("td");
+                countInput.type = "number";
+                countInput.inputMode = "numeric";
+                countInput.setAttribute("cits3403-user", element)
+                countInput.addEventListener("change", countSubmit)
+                setCountInput("GET", base_path + "/game/api/count?user=" + element, true, countInput);
+                countDiv.appendChild(countInput);
+
+                countCell.appendChild(countDiv);
+                newRow.appendChild(countCell);
+
+                //Role section ~~~~~~~~~~~~~~~~~~
+                let roleCell = document.createElement("td")
+                let roleSelect = document.createElement("select");
+                roleSelect.name = "role";
+
+                let admin = document.createElement("option");
+                admin.value = "Admin";
+                admin.innerHTML = "Admin";
+                roleSelect.appendChild(admin);
+
+                let user = document.createElement("option");
+                user.value = "User";
+                user.innerHTML = "User";
+                roleSelect.appendChild(user);
+                roleSelect.setAttribute("cits3403-user", element)
+                setRoleStatus(roleSelect, element);
+                roleSelect.addEventListener("change", roleChanged);
+
+                roleCell.appendChild(roleSelect);
+
+                newRow.appendChild(roleCell);
+
+                //Add the delete user button
+                let deleteCell = document.createElement("td");
+
+                let deleteButton = document.createElement("button");
+                deleteButton.innerHTML = "Delete";
+                deleteButton.setAttribute("cits3403-user", element)
+                deleteButton.addEventListener("click", deletePressed);
+                
+                deleteCell.appendChild(deleteButton);
+
+                newRow.appendChild(deleteCell);
+
+                //Add the new user row to the table
+                adminTable.appendChild(newRow);
+            });    
         }
     };
 
     xhttp.open("GET", base_path + "/admin/api/user/all", true)
     xhttp.send()
+
 }
 
-function userListItemClick() {
-    clickedUser.style.backgroundColor = "WHITE";
-    clickedUser.style.color = "BLACK";
+function countSubmit() {
+    let countCell = this
+    let user = countCell.getAttribute('cits3403-user')
+    let integerCount = parseInt(countCell.value);
 
-    this.style.backgroundColor = "BLACK";
-    this.style.color = "WHITE";
-
-    clickedUser = this;
-    activeUser = clickedUser.innerHTML;
-    
-    updateActiveUserInfo();
-}
-
-function updateActiveUserInfo() {
-    //Update the users name
-    document.getElementById("currentUser").innerHTML = activeUser;
-
-    //Update the users password
-
-
-    //Update the users count
-    var xhttpCount = new XMLHttpRequest;
-    xhttpCount.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            let count = JSON.parse(this.responseText).count;
-            document.getElementById("count").innerHTML = count;
-        }
-    };
-    xhttpCount.open("GET", base_path + "/game/api/count?user=" + activeUser, true);
-    xhttpCount.send();
-
-    //Update the users admin status
-    var xhttpAdmin = new XMLHttpRequest;
-    xhttpAdmin.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            let isAdmin = JSON.parse(this.responseText).admin;
-            if (isAdmin) {
-                isAdmin = "Admin";
-            } else {
-                isAdmin = "Not Admin";
-            }
-            document.getElementById("adminStatus").innerHTML = isAdmin;
-
-            refreshAdminButton(); 
-        }
-    };
-    xhttpAdmin.open("GET", base_path + "/admin/api/user/is-admin?user=" + activeUser, true);
-    xhttpAdmin.send();
-}
-
-function modifyUserCount() {
-    let integerCount = parseInt(document.getElementById("countForm").value);
-    document.getElementById("countForm").value = "";
-    
-    if (Number.isNaN(integerCount)) {
-        alert("Error, you must input a number for the count.")
-        return;
-    }
-
-    // Confirmation code to avoid accidental modification of a user's count
-    let confirmPrompt = window.prompt("This will permanently modify " + activeUser + "'s count. Are you sure you wish to continue? If so, type in their username.","");
-    if (confirmPrompt == null) {
-        return;
-    } else if (confirmPrompt !== activeUser) {
-        alert("Confirmation failed. " + activeUser + "'s count was not modified.")
-        return;
-    }
-
-    let amount = integerCount - parseInt(document.getElementById("count").innerHTML);
+    let amount = integerCount - countCell.placeholder;
 
     if (amount > 0) {
         var action = "increment";
     } else if (amount < 0) {
-        var action = "decrement"
+        var action = "decrement";
         amount *= -1;
     } else {
         return
     }
 
-
-
     // Set the count to the input count
     var xhttp = new XMLHttpRequest;
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            updateActiveUserInfo();
+            setCountInput("GET", base_path + "/game/api/count?user=" + user, true, countCell);
         }
     }
 
-    xhttp.open("POST", base_path + "/game/api/count?user=" + activeUser + "&action=" + action + "&amount=" +amount, true);
+    xhttp.open("POST", base_path + "/game/api/count?user=" + user + "&action=" + action + "&amount=" +amount, true);
     xhttp.send();    
+}
+
+function setCountInput(type, path, async, countCell) {
+    var xhttp = new XMLHttpRequest
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            let count = JSON.parse(this.responseText).count;
+            countCell.value = count;
+            countCell.placeholder = count; //The place holder will always hold the true count
+        }
+    };
+    xhttp.open(type, path, async);
+    xhttp.send();
+}
+
+function setRoleStatus(roleSelect, user) {
+    var xhttpAdmin = new XMLHttpRequest;
+    xhttpAdmin.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            let isAdmin = JSON.parse(this.responseText).admin;
+            if (isAdmin) {
+                roleSelect.value = "Admin";
+            } else {
+                roleSelect.value = "User";
+            }
+        }
+    };
+    xhttpAdmin.open("GET", base_path + "/admin/api/user/is-admin?user=" + user, true);
+    xhttpAdmin.send();
 
 }
 
-function refreshAdminButton() {
-    if (document.getElementById("adminStatus").innerHTML === "Admin") {
-        document.getElementById("adminButton").innerHTML = "Remove " + activeUser + " admin"
-        setAdminStatus = "false";
-    } else {
-        document.getElementById("adminButton").innerHTML = "Make " + activeUser + " admin"
-        setAdminStatus = "true"
-    }
+function roleChanged() {
+    setUsersRole(this, this.getAttribute('cits3403-user'), this.value);
 }
-
-function changeUserAdmin() {
-    // Confirmation code to avoid accidental modification of a user's admin state
-    if (setAdminStatus === "true") {
-        var promptText = "Warning, this will make " + activeUser + " admin. Are you sure you wish to continue? If so, type in their username." 
+function setUsersRole(roleSelect, user, value) {
+    
+    let setAdminStatus = (value === "Admin");
+    if (setAdminStatus) {
+        var promptText = "Warning, this will make " + user + " admin. Are you sure you wish to continue? If so, type in their username." 
     } else {
-        var promptText = "Warning, this will remove admin from " + activeUser + ". Are you sure you wish to continue? If so, type in their username"
+        var promptText = "Warning, this will remove admin from " + user + ". Are you sure you wish to continue? If so, type in their username"
     }
     let confirmPrompt = window.prompt(promptText,"");
     if (confirmPrompt == null) {
+        setRoleStatus(roleSelect, user);
         return;
-    } else if (confirmPrompt !== activeUser) {
-        alert("Confirmation failed. " + activeUser + "'s admin state was not modified.")
+    } else if (confirmPrompt !== user) {
+        alert("Confirmation failed. " + user + "'s admin state was not modified.")
+        setRoleStatus(roleSelect, user);
         return;
     }
 
     var xhttp = new XMLHttpRequest;
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 204) {
-            updateActiveUserInfo();
+            setRoleStatus(roleSelect, user);
+        }
+    }
+    xhttp.open("PUT", base_path + "/admin/api/user/admin?user=" + user + "&adminFlag=" + setAdminStatus);
+    xhttp.send(); 
+
+}
+
+function deletePressed() {
+    let user = this.getAttribute('cits3403-user')
+    deleteUser(user, document.querySelector(`tr[cits3403-user='${user}']`));
+}
+
+function deleteUser(user, currentRow) {
+    
+    // Confirmation code to avoid accidental modification of a user's count
+    let confirmPrompt = window.prompt("This will permanently delete " + user + ". Are you sure you wish to continue? If so, type in their username.","");
+    if (confirmPrompt == null) {
+        return;
+    } else if (confirmPrompt !== user) {
+        alert("Confirmation failed. " + user + "'s count was not modified.")
+        return;
+    }
+
+    // Set the count to the input count
+    var xhttp = new XMLHttpRequest;
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            //Delete the column from the table
+            currentRow.parentElement.removeChild(currentRow);
         }
     }
 
-    xhttp.open("PUT", base_path + "/admin/api/user/admin?user=" + activeUser + "&adminFlag=" + setAdminStatus);
-    xhttp.send();  
-}
-
-// Just refreshes the userList which will nicely initalize everything
-function bodyOnload() {
-    refreshUserList();
+    xhttp.open("DELETE", base_path + "/auth/api/user/" + user, true);
+    xhttp.send();   
 }

@@ -12,19 +12,6 @@ def page():
     return render_template('game.html')
 
 
-@game.route('/api/user/<user_id>', methods=['DELETE'])
-@login_required
-@admin_required
-def user_endpoint(user_id: str):
-    from flask_app.auth.models import User
-    from flask_app import db
-    user = User.query.get(user_id)
-    if request.method == 'DELETE':
-        db.session.delete(user)
-        db.session.commit()
-        return "user has been deleted", 200
-
-
 @game.route('/api/count', methods=['GET', 'POST', 'DELETE'])
 @login_required
 def count_endpoint():
