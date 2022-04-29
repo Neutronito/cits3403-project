@@ -52,9 +52,10 @@ deploy_branch:
     url: https://$CI_ENVIRONMENT_SLUG.$WEBSITE_DOMAIN
     on_stop: stop_branch
   rules:
-    - if: $CI_COMMIT_BRANCH
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: never
+    - if: $CI_COMMIT_BRANCH
+
 
 
 stop_branch:
@@ -66,9 +67,10 @@ stop_branch:
     - sshss "docker stop cits3403-project-$CI_COMMIT_BRANCH"
 
   rules:
-    - if: $CI_COMMIT_BRANCH
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: never
+    - if: $CI_COMMIT_BRANCH
+
   environment:
     name: branch/$CI_COMMIT_BRANCH
     action: stop
