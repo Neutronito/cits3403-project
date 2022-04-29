@@ -43,17 +43,18 @@ deploy_branch:
         docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH &&
         docker run 
           --rm 
-          -e SCRIPT_NAME=/app/$CI_COMMIT_BRANCH 
           -v /var/tmp/flask:/app 
           --name cits3403-project-$CI_COMMIT_BRANCH
-          -dt $CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH --bind unix:/app/$CI_COMMIT_BRANCH.socket --log-level=debug"
+          -dt $CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH --bind unix:/app/$CI_ENVIRONMENT_SLUG.socket --log-level=debug"
 
   environment:
     name: branch/$CI_COMMIT_BRANCH
-    url: https://$WEBSITE_DOMAIN/app/$CI_COMMIT_BRANCH
+    url: https://$CI_ENVIRONMENT_SLUG.$WEBSITE_DOMAIN
     on_stop: stop_branch
   rules:
     - if: $CI_COMMIT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: never
 
 
 stop_branch:
@@ -64,7 +65,30 @@ stop_branch:
   script:
     - sshss "docker stop cits3403-project-$CI_COMMIT_BRANCH"
 
+  rules:
+    - if: $CI_COMMIT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: never
   environment:
     name: branch/$CI_COMMIT_BRANCH
+    action: stop
+  when: manual
+
+
+deploy_master:
+  extends: deploy_branch
+  environment:
+    name: production
+    url: https://$WEBSITE_DOMAIN
+    on_stop: stop_master
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+stop_master:
+  extends: stop_branch
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  environment:
+    name: production
     action: stop
   when: manual

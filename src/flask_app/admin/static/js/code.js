@@ -35,7 +35,7 @@ function initTable() {
                 countInput.inputMode = "numeric";
                 countInput.setAttribute("cits3403-user", element)
                 countInput.addEventListener("change", countSubmit)
-                setCountInput("GET", base_path + "/game/api/count?user=" + element, true, countInput);
+                setCountInput("GET","/game/api/count?user=" + element, true, countInput);
                 countDiv.appendChild(countInput);
 
                 countCell.appendChild(countDiv);
@@ -85,14 +85,14 @@ function initTable() {
         }
     };
 
-    xhttp.open("GET", base_path + "/admin/api/user/all", true)
+    xhttp.open("GET", "/admin/api/user/all", true)
     xhttp.send()
 
 }
 
 function DateChange(user, countCell, date) {
     countCell.setAttribute('cits3403-date', date);
-    setCountInput("GET", `${base_path}/game/api/count?user=${user}&date=${date}`, true, countCell)
+    setCountInput("GET", `/game/api/count?user=${user}&date=${date}`, true, countCell)
 }
 
 function countSubmit() {
@@ -112,7 +112,7 @@ function countSubmit() {
         return
     }
 
-    setCountInput("POST", `${base_path}/game/api/count?user=${user}&action=${action}&amount=${amount}&date=${date}`, true, countCell)
+    setCountInput("POST", `/game/api/count?user=${user}&action=${action}&amount=${amount}&date=${date}`, true, countCell)
 }
 
 function setCountInput(type, path, async, countCell) {
@@ -140,7 +140,7 @@ function setRoleStatus(roleSelect, user) {
             }
         }
     };
-    xhttpAdmin.open("GET", base_path + "/admin/api/user/is-admin?user=" + user, true);
+    xhttpAdmin.open("GET", "/admin/api/user/is-admin?user=" + user, true);
     xhttpAdmin.send();
 
 }
@@ -172,7 +172,7 @@ function setUsersRole(roleSelect, user, value) {
             setRoleStatus(roleSelect, user);
         }
     }
-    xhttp.open("PUT", base_path + "/admin/api/user/admin?user=" + user + "&adminFlag=" + setAdminStatus);
+    xhttp.open("PUT", "/admin/api/user/admin?user=" + user + "&adminFlag=" + setAdminStatus);
     xhttp.send(); 
 
 }
@@ -202,6 +202,6 @@ function deleteUser(user, currentRow) {
         }
     }
 
-    xhttp.open("DELETE", base_path + "/auth/api/user/" + user, true);
+    xhttp.open("DELETE", "/auth/api/user/" + user, true);
     xhttp.send();   
 }

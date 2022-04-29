@@ -1,6 +1,6 @@
 function api_call(getRoute, request_type, success) {
     return $.ajax({
-    url: base_path + getRoute,
+    url: getRoute,
     type: request_type,
     success: success,
     })
