@@ -6,7 +6,7 @@ function initTable() {
 
             //Now add all our obtained users to the table 
             const userList = JSON.parse(this.responseText).user_list
-
+            let todayUTC = new Date((new Date()).toUTCString())
             userList.forEach((element) => {
                 //Create a new row
                 let newRow = document.createElement("tr");
@@ -15,6 +15,17 @@ function initTable() {
                 let nameColumn = document.createElement("td");
                 nameColumn.innerHTML = element;
                 newRow.appendChild(nameColumn);
+
+                //Add the date column ~~~~~~~~~~~~~~~~~~
+                let dateColumn = document.createElement("td");
+                let datePicker = document.createElement("input")
+                datePicker.setAttribute('cits3403-user', element)
+                datePicker.setAttribute('type', 'date')
+                datePicker.valueAsDate = todayUTC;
+                datePicker.setAttribute('max', todayUTC.toISOString().slice(0, -14));
+                datePicker.setAttribute('required', 'true');
+                dateColumn.appendChild(datePicker);
+                newRow.appendChild(dateColumn);
 
                 //Add the count ~~~~~~~~~~~~~~~~~~
                 let countInput = document.createElement("input");
@@ -29,6 +40,10 @@ function initTable() {
 
                 countCell.appendChild(countDiv);
                 newRow.appendChild(countCell);
+                DateChange(element, countInput, todayUTC.toISOString().slice(0, -5))
+                datePicker.addEventListener('change', (event)=>{
+                    DateChange(element, countInput ,event.target.valueAsDate.toISOString().slice(0, -5))
+                });
 
                 //Role section ~~~~~~~~~~~~~~~~~~
                 let roleCell = document.createElement("td")
@@ -75,10 +90,16 @@ function initTable() {
 
 }
 
+function DateChange(user, countCell, date) {
+    countCell.setAttribute('cits3403-date', date);
+    setCountInput("GET", `${base_path}/game/api/count?user=${user}&date=${date}`, true, countCell)
+}
+
 function countSubmit() {
-    let countCell = this
-    let user = countCell.getAttribute('cits3403-user')
+    let countCell = this;
+    let user = countCell.getAttribute('cits3403-user');
     let integerCount = parseInt(countCell.value);
+    let date = countCell.getAttribute('cits3403-date');
 
     let amount = integerCount - countCell.placeholder;
 
@@ -91,16 +112,7 @@ function countSubmit() {
         return
     }
 
-    // Set the count to the input count
-    var xhttp = new XMLHttpRequest;
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            setCountInput("GET", base_path + "/game/api/count?user=" + user, true, countCell);
-        }
-    }
-
-    xhttp.open("POST", base_path + "/game/api/count?user=" + user + "&action=" + action + "&amount=" +amount, true);
-    xhttp.send();    
+    setCountInput("POST", `${base_path}/game/api/count?user=${user}&action=${action}&amount=${amount}&date=${date}`, true, countCell)
 }
 
 function setCountInput(type, path, async, countCell) {

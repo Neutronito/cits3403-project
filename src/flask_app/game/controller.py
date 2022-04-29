@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify
 from flask_login import current_user, login_required
+from datetime import datetime
 
 from flask_app.auth.controller import admin_required
 
@@ -17,13 +18,28 @@ def page():
 def count_endpoint():
     from flask_app import db
     from flask_app.auth.models import User
+    from flask_app.game.models import Count
     args = request.args
 
-    if current_user.admin and 'user' in args:
-        count_row = User.query.get(args['user']).count
-        
+    if current_user.admin and 'date' in args:
+        try:
+            date = datetime.fromisoformat(args['date']).date()
+        except ValueError:
+            return "invalid date", 422
     else:
-        count_row = current_user.count
+        date = None
+
+    if current_user.admin and 'user' in args:
+        user = User.query.get(args['user'])
+    else:
+        user = current_user
+
+    if date is None:
+        count_row = user.get_today_count()
+    else:
+        count_row = db.session.query(Count).filter_by(username=user.name, date=date).first()
+        if count_row is None:
+            count_row = Count(username=user.name, date=date)
 
     if request.method == 'GET':
         return jsonify({
