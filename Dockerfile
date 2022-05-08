@@ -25,7 +25,9 @@ RUN poetry build && /venv/bin/pip install dist/*.whl
 
 FROM base as final
 
-RUN apk add --no-cache libffi libpq
+RUN apk add --no-cache libffi libpq chromium
 COPY --from=builder /venv /venv
 ENV PATH /venv/bin:$PATH
+RUN flask-db upgrade
+RUN flask-create-admin -u admin -p admin
 ENTRYPOINT ["flask-production"]

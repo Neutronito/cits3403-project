@@ -2,8 +2,9 @@ import os
 
 from dotenv import load_dotenv
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy, inspect
+from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_migrate import Migrate
 
 from flask_app.home.controller import home
 from flask_app.auth.controller import auth
@@ -17,6 +18,8 @@ login_manager = LoginManager()
 
 from flask_app.auth import models as auth_models
 from flask_app.game import models as game_models
+
+migrate = Migrate(db=db, directory=os.path.join(basedir, 'migrations'))
 
 
 @login_manager.user_loader
@@ -41,14 +44,7 @@ def create_app():
 
     db.init_app(app)
     login_manager.init_app(app)
-
-    with app.app_context():
-        inspector = inspect(db.engine)
-        first_time_create_admin = not inspector.has_table(auth_models.User.__tablename__)
-    db.create_all(app=app)
-    if first_time_create_admin:
-        with app.app_context():
-            create_admin_func(app.config['DEFAULT_ADMIN_USERNAME'], app.config['DEFAULT_ADMIN_PASSWORD'])
+    migrate.init_app(app, render_as_batch=True)
 
     return app
 
@@ -76,6 +72,18 @@ def shell():
     subprocess.run(['flask', 'shell'], env=my_env)
 
 
+def db_command():
+    import subprocess
+    import signal
+    import sys
+    other_args = sys.argv[1:]
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+    load_dotenv(os.path.join(basedir, '.flaskenv'))
+    my_env = os.environ.copy()
+    my_env['FLASK_APP'] = basedir
+    subprocess.run(['flask', 'db'] + other_args, env=my_env)
+
+
 def create_admin_func(username, password) -> bool:
     from flask_app.auth.models import User
     
@@ -98,12 +106,24 @@ def create_admin_func(username, password) -> bool:
 def create_admin() -> int:
     from getpass import getpass
     import sys
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-u', '--username', type=str, help='username of the admin')
+    parser.add_argument('-pu', '--password', type=str, help='password of the admin')
 
-    username = input("Enter username: ")
-    password = getpass("Enter password: ")
+    args = vars(parser.parse_args())
+    if args['username'] is None:
+        username = input("Enter username: ")
+    else:
+        username = args['username']
+
+    if args['password'] is None:
+        password = getpass("Enter password: ")
+    else:
+        password = args['password']
+
     app = create_app()
 
-    return_status = False
     with app.app_context():
         return_status = create_admin_func(username, password)
     if return_status:
