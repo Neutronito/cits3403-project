@@ -1,7 +1,9 @@
+from contextlib import redirect_stderr
 from crypt import methods
 from operator import methodcaller
-from flask import render_template, Blueprint, jsonify, request
-from flask_login import login_required  
+from flask import render_template, Blueprint, jsonify, request, redirect, url_for
+from flask_app.admin.forms import newMapForm
+from flask_login import login_required, current_user
 from flask import app
 
 from flask_app.auth.controller import admin_required
@@ -9,11 +11,29 @@ from flask_app.auth.controller import admin_required
 admin = Blueprint('admin', __name__, template_folder='views', static_folder='static')
 
 
-@admin.route("/", methods=["GET"])
+@admin.route("/", methods=["GET", "POST"])
 @login_required
 @admin_required
 def panel():
-    return render_template('admin.html')
+    form = newMapForm()
+    if form.validate_on_submit():
+
+        from flask_app import db
+        from flask_app.game.models import Map
+        the_map = Map(date=form.date.data,
+                    username=current_user.name,
+                    html=form.map.data,
+                    width=form.width.data,
+                    height=form.height.data)
+        
+        db.session.add(the_map)
+        db.session.commit()
+
+        return redirect(url_for('admin.panel'))
+    if request.method == 'GET':
+        return render_template('admin.html', form=form, default_tab="mapTableLink")
+    elif request.method == 'POST':
+        return render_template('admin.html', form=form, default_tab="addMapLink")
 
 @admin.route("/api/user/all", methods=["GET"])
 @login_required

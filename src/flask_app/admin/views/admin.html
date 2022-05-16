@@ -11,26 +11,93 @@
 {% block content %}
 <!-- Page heading and description -->
 <div class="container-sm">
-    <h1 class="standardText heading text-center">
-        Welcome to the Admin Page!
-    </h1>
-    <!-- Refresh the list of users button -->
-    <div class="col-lg-8 offset-lg-2">
-        <table id="adminTable" class="standardTable">
-            <tr>
-                <th>Name</th>
-                <th>Date</th>
-                <th>Count</th>
-                <th>Role</th>
-                <th>Delete</th>
-            </tr>
-        </table>
-    <div>
+        <div class="tab">
+            <button class="tablinks" onclick="openTab(event, 'userTableTab')" id = "userTableLink">Table of Users</button>
+            <button class="tablinks" onclick="openTab(event, 'mapTableTab')" id = "mapTableLink">Table of Maps</button>
+            <button class="tablinks" onclick="openTab(event, 'addMapTab')" id = "addMapLink">Add a New Map</button>
+        </div>
+        
+        <!-- Tab content -->
+        <div id="userTableTab" class="tabcontent">
+            <h1 class="standardText heading text-center">
+                This is a list of all our users
+            </h1>
+            <!-- Refresh the list of users button -->
+            <table id="adminTable" class="standardTable">
+                <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Count</th>
+                    <th>Role</th>
+                    <th>Delete</th>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="mapTableTab" class="tabcontent">
+            <h1 class="standardText heading text-center">
+                This is a list of all our maps
+            </h1>
+            <!-- Refresh the list of users button -->
+            <table id="mapTable" class="standardTable">
+                <tr>
+                    <th>Date</th>
+                    <th>Author</th>
+                    <th>HTML</th>
+                    <th>Image</th>
+                    <th>Delete</th>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="addMapTab" class="tabcontent">
+            <form action="" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <p>
+                    <b>{{ form.map.label(class="labelStyling") }}</b><br>
+                    {{ form.map(size=32) }}
+                    {% for error in form.map.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+
+                <p>
+                    <b>{{ form.width.label(class="labelStyling") }}</b><br>
+                    {{ form.width(size=32) }}
+                    {% for error in form.width.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+
+                <p>
+                    <b>{{ form.height.label(class="labelStyling") }}</b><br>
+                    {{ form.height(size=32) }}
+                    {% for error in form.height.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                
+                <p>
+                    <b>{{ form.date.label(class="labelStyling") }}</b><br>
+                    {{ form.date(size=32) }}
+                    {% for error in form.date.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+
+                <button type="button" onclick="previewNewMap()" class="standardButton submitButton btn btn-danger btn-lg">Preview the HTML</button>
+
+                <p>{{ form.submit(class="submitButton standardButton btn btn-success btn-lg") }}</p>
+            </form>
+        </div>
 </div>
 
 <!-- Body onload -->
 <script>
-    initTable();
+    document.getElementById("{{ default_tab }}").click();
+    initAdminTable();
+    initMapTable();
+    initAddMap();
 </script>
 
 {% endblock %}

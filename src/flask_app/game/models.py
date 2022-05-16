@@ -49,5 +49,5 @@ class Map(db.Model):
         return db.session.query(Map).filter_by(date=date).first()
 
     def to_dict(self) -> dict:
-        return {"date": self.date, "username": self.username, "html": self.html,
+        return {"date": self.date.isoformat(), "username": self.username, "html": self.html,
                 "width": self.width, "height": self.height}

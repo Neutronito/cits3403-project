@@ -1,4 +1,26 @@
-function initTable() {
+//Deal with the tabs here
+function openTab(inEvent, tabID) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+  
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+  
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+  
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(tabID).style.display = "block";
+    inEvent.currentTarget.className += " active";
+}
+
+function initAdminTable() {
     var xhttp = new XMLHttpRequest
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
@@ -74,6 +96,9 @@ function initTable() {
                 deleteButton.innerHTML = "Delete";
                 deleteButton.setAttribute("cits3403-user", element)
                 deleteButton.addEventListener("click", deletePressed);
+                // Style button
+                deleteButton.classList.add("tableButton");
+                deleteButton.classList.add("btn-primary");
                 
                 deleteCell.appendChild(deleteButton);
 
@@ -185,11 +210,11 @@ function deletePressed() {
 function deleteUser(user, currentRow) {
     
     // Confirmation code to avoid accidental modification of a user's count
-    let confirmPrompt = window.prompt("This will permanently delete " + user + ". Are you sure you wish to continue? If so, type in their username.","");
+    let confirmPrompt = window.prompt("This will permanently delete " + user + ". Are you sure you wish to continue? If so, type in their username.");
     if (confirmPrompt == null) {
         return;
     } else if (confirmPrompt !== user) {
-        alert("Confirmation failed. " + user + "'s count was not modified.")
+        alert("Confirmation failed. " + user + " was not deleted.");
         return;
     }
 
@@ -204,4 +229,178 @@ function deleteUser(user, currentRow) {
 
     xhttp.open("DELETE", "/auth/api/user/" + user, true);
     xhttp.send();   
+}
+
+//Deal with the map table
+function initMapTable() {
+    var xhttp = new XMLHttpRequest;
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+        
+            const mapList = JSON.parse(this.responseText);
+            
+            //Loop through all the maps that are in the db
+            // A note to take is that maps are ID from the date they are assigned to
+            mapList.forEach((element) => {
+                // Create and append new row
+                let newRow = document.createElement("tr");
+                newRow.setAttribute("map-ID", element.date);
+                document.getElementById("mapTable").appendChild(newRow);
+
+                // Add the date column
+                let dateColumn = document.createElement("td");
+                dateColumn.innerHTML = element.date;
+                newRow.appendChild(dateColumn);
+
+                // Add the author column
+                let authorColumn = document.createElement("td");
+                authorColumn.innerHTML = element.username;
+                authorColumn.setAttribute("map-ID", element.date);
+                newRow.appendChild(authorColumn)
+
+                // Add the HTML column
+                let htmlColumn = document.createElement("td");
+                
+                //Add the HTML button
+                let htmlButton = document.createElement("button");
+                htmlButton.innerHTML = "Click for HTML";
+                htmlButton.setAttribute("map-ID", element.date);
+                htmlButton.addEventListener("click", htmlPressed);
+
+                // Style button
+                htmlButton.classList.add("tableButton");
+                htmlButton.classList.add("btn-primary");
+                
+                htmlColumn.appendChild(htmlButton);
+
+                newRow.appendChild(htmlColumn);
+
+                // Add the image column
+                let imgColumn = document.createElement("td");
+                
+                let imgButton = document.createElement("button");
+                imgButton.innerHTML = "Click for Image";
+                imgButton.setAttribute("map-ID", element.date);
+                imgButton.setAttribute("map-width", element.width);
+                imgButton.setAttribute("map-height", element.height);
+                imgButton.addEventListener("click", imgPressed);
+
+                // Style button
+                imgButton.classList.add("tableButton");
+                imgButton.classList.add("btn-primary");
+                
+                imgColumn.appendChild(imgButton);
+
+                newRow.appendChild(imgColumn);
+
+                //Add the delete button
+                let delColumn = document.createElement("td");
+                
+                let delButton = document.createElement("button");
+                delButton.innerHTML = "Delete Map";
+                delButton.setAttribute("map-ID", element.date);
+                delButton.addEventListener("click", delPressed);
+
+                // Style button
+                delButton.classList.add("tableButton");
+                delButton.classList.add("btn-primary");
+                
+                delColumn.appendChild(delButton);
+
+                newRow.appendChild(delColumn);
+
+            });
+        }
+    }
+    xhttp.open("GET", "/game/api/map/all", true)
+    xhttp.send()
+}
+
+function htmlPressed() {
+    let mapID = this.getAttribute("map-ID");
+    var xhttp = new XMLHttpRequest;
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            let html = JSON.parse(this.responseText).html
+            let newWindow = window.open();
+            newWindow.document.write(`<textarea readonly style="width:100%;height:100%">${html}</textarea>`);
+        }
+    };
+
+    xhttp.open("GET", "/game/api/map?date=" + mapID, true)
+    xhttp.send()
+}
+
+function imgPressed() {
+    let mapID = this.getAttribute("map-ID");
+    let height = this.getAttribute("map-height");
+    let width = this.getAttribute("map-width");
+
+    //Get the preview
+    var xhttp = new XMLHttpRequest;
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            let newWindow = window.open();
+            let encodedImg = JSON.parse(this.responseText).data;
+            newWindow.document.write(`<img src="data:image/png;base64,${encodedImg}" />`);
+        }
+    };
+    xhttp.open("GET", `/game/api/preview?date=${mapID}&width=${width}&height=${height}`, true);
+    xhttp.send();
+}
+
+function delPressed() {
+    let mapID = this.getAttribute("map-ID");
+    let button = this;
+
+    // Confirmation code to avoid accidental modification of a user's count
+    let confirmPrompt = window.prompt("This will permanently delete the " + mapID + " map. Are you sure you wish to continue? If so, type in the map's date.");
+    if (confirmPrompt == null) {
+        return;
+    } else if (confirmPrompt !== mapID) {
+        alert("Confirmation failed. Map " + mapID + "was not deleted.");
+        return;
+    }
+
+    var xhttp = new XMLHttpRequest;
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            button.parentElement.parentElement.parentElement.removeChild(button.parentElement.parentElement)
+        }
+    };
+
+    xhttp.open("DELETE", "/game/api/map?date=" + mapID, true)
+    xhttp.send();
+}
+
+function initAddMap() {
+    let todayUTC = new Date((new Date()).toUTCString());
+    let datePicker = document.getElementById("date");
+
+    datePicker.setAttribute('min', todayUTC.toISOString().slice(0, -14))
+    datePicker.valueAsDate = todayUTC;
+
+    let width = document.getElementById("width");
+    let height = document.getElementById("height");
+
+    width.value = 300;
+    height.value = 300;
+}
+
+function previewNewMap() {
+    let map = document.getElementById("map").value;
+    let height = document.getElementById("height").value;
+    let width = document.getElementById("width").value;
+
+    //Get the preview
+    var xhttp = new XMLHttpRequest;
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            let newWindow = window.open();
+            let encodedImg = JSON.parse(this.responseText).data;
+            newWindow.document.write(`<img src="data:image/png;base64,${encodedImg}" />`);
+        }
+    };
+    xhttp.open("POST", `/game/api/preview?&width=${width}&height=${height}`, true)
+    xhttp.send(map);
 }
