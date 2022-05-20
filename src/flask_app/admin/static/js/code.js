@@ -128,7 +128,7 @@ function countSubmit() {
 
     let amount = integerCount - countCell.placeholder;
 
-    if (amount > 0) {
+    if (amount > 0 && amount <= 100) {
         var action = "increment";
     } else if (amount < 0) {
         var action = "decrement";
