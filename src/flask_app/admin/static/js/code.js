@@ -55,6 +55,7 @@ function initAdminTable() {
                 let countCell  = document.createElement("td");
                 countInput.type = "number";
                 countInput.inputMode = "numeric";
+                countInput.max = 100;
                 countInput.setAttribute("cits3403-user", element)
                 countInput.addEventListener("change", countSubmit)
                 setCountInput("GET","/game/api/count?user=" + element, true, countInput);
@@ -128,7 +129,7 @@ function countSubmit() {
 
     let amount = integerCount - countCell.placeholder;
 
-    if (amount > 0 && amount <= 100) {
+    if (amount > 0) {
         var action = "increment";
     } else if (amount < 0) {
         var action = "decrement";
