@@ -2,48 +2,27 @@
 
 {% block header %}
 <script type="text/javascript" src="{{ url_for('game.static', filename='js/code.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('game.static', filename='css/code.css') }}">
 {% endblock %}
 
 {% block content %}
-<!-- Standard explanation text with heading -->
 <div class="container-sm">
-    <div class="text-center">
-        <h1 class="standardText heading">
-            Welcome to the Button Pushing Homepage!
-        </h1>
-    </div>
-    <div class="col-lg-8 offset-lg-2">
-        <p class="standardText">
-            This is a website we have created to develop our website development abilities.
-            Its purpose is to allow the user to press the button on screen as many times as
-            they want, and have the number of presses recorded. Additionally, they will have
-            the ability to create an account with an associated username and password. The
-            user will then be able to log into this account and record how many times they
-            have pressed the button since the account creation. The idea behind is that we
-            will have to create a back-end process that will recieve the number of times
-            you press the button in one sitting and store this number, which you can then
-            view after you login. This site will also have a leaderboard to see who
-            has pressed the most times.
-        </p>
+    <div class="coding">
+        <h3>Enter Code here</h3>
+        <form>
+            <textarea id="code" name="code" rows="4" cols="100"></textarea>
+        </form>
+        <h3 id="score"></h3>
+        <div class=buttons>
+            <button onclick="showMap()" class="button3">Show Map</a>
+            <button onclick="previewMap()" class="button3">Preview Map</a>
+            <button onclick="submit()" class="button3">Submit </a>
+        </div>
     </div>
 </div>
 
-<!-- Clicking Button -->
-<div class="container">
-    <button type="button" onclick="incrementCounter()" class="standardButton btn btn-primary btn-lg col-lg-8 offset-lg-2">Push Me!!</button>
-    <div class="col-lg-8 offset-lg-2 text-center">
-      <h2 id = clickCount class="standardText heading"></h2>
-    </div>
-    <button type="button" onclick="decrementCounter()" class="standardButton btn btn-warning btn-lg col-lg-8 offset-lg-2">Decrement the Pushed Count!</button>
 
-    <div class="btn-group col-lg-8 offset-lg-2" role="group" aria-label="Basic example">
-      <button type="button" onclick="resetCounter()" class="standardButton btn btn-danger btn-lg">Reset the Pushed Count!</button>
-      <button type="button" onclick="submitCounter()" class="standardButton btn btn-success btn-lg">Submit the Pushed Count!</button>
-    </div>
-
-  </div>
 <script>
-    fetchCount();
+    init();
 </script>
-
 {% endblock %}

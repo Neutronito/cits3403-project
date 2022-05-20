@@ -1,3 +1,4 @@
+from itertools import count
 from flask import Blueprint, render_template, request, jsonify
 from flask_login import current_user, login_required
 from datetime import datetime
@@ -52,31 +53,37 @@ def count_endpoint():
         })
 
     elif request.method == 'POST':
-        action = args.get('action')
-        amount = int(args.get('amount', 1))
-        if action == 'increment':
-            count_row.count += amount
-        elif action == 'decrement':
-            count_row.count -= amount
-        else:
+        if current_user.admin:
+            action = args.get('action')
+            amount = int(args.get('amount', 1))
+            if action == 'increment':
+                count_row.count += amount
+            elif action == 'decrement':
+                count_row.count -= amount
+            else:
+                return jsonify({
+                    "error": "please choose either 'increment' or 'decrement' in the 'action' parameter"
+                }), 400
+
+            db.session.add(count_row)
+            db.session.commit()
+
             return jsonify({
-                "error": "please choose either 'increment' or 'decrement' in the 'action' parameter"
-            }), 400
-
-        db.session.add(count_row)
-        db.session.commit()
-
-        return jsonify({
-            "count": count_row.count
-        })
+                "count": count_row.count
+            })
+        else:
+            return "admin required", 401
 
     elif request.method == 'DELETE':
-        count_row.count = 0
-        db.session.add(count_row)
-        db.session.commit()
-        return jsonify({
-            "count": 0
-        })
+        if current_user.admin:
+            count_row.count = 0
+            db.session.add(count_row)
+            db.session.commit()
+            return jsonify({
+                "count": 0
+            })
+        else:
+            return "admin required", 401
 
 
 @game.route('/api/map', methods=['GET', 'POST', 'DELETE'])
@@ -195,6 +202,8 @@ def normalize(value: float, skewness: float = 2) -> int:
 def score_endpoint():
     from flask_app.game.models import Map
     from SSIM_PIL import compare_ssim
+    from flask_app import db
+
     body = request.get_data(as_text=True)
     args = request.args
     if current_user.admin and 'date' in args:
@@ -210,4 +219,12 @@ def score_endpoint():
     the_map_image = byes_to_image(get_image_binary(html=the_map.html, width=the_map.width, height=the_map.height))
     the_other_image = byes_to_image(get_image_binary(html=body, width=the_map.width, height=the_map.height))
     score = normalize(compare_ssim(the_map_image, the_other_image, GPU=False))
-    return jsonify({"score": score}), 200
+
+    count_row = current_user.get_today_count()
+
+    if score > count_row.count:
+        count_row.count = score
+        db.session.add(count_row)
+        db.session.commit()
+
+    return jsonify({"submit_score": score, "top_score": count_row.count}), 200
