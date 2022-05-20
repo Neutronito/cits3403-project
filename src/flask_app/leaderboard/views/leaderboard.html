@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block header %}
-<script type="text/javascript" src="{{ url_for('leaderboard.static', filename='js/leaderboard.js') }}"></script>
+<script src="{{ url_for('leaderboard.static', filename='js/leaderboard.js') }}"></script>
 <link rel="stylesheet" href="{{ url_for('leaderboard.static', filename='css/leaderboard.css') }}">
 {% endblock %}
 {% block content %}
@@ -29,7 +29,7 @@
   <div class="tab-pane fade" id="nav-latest" role="tabpanel" aria-labelledby="nav-latest-tab">
       <br>
       <table >
-        <thead>
+        <thead>S
             <tr>
                 <th>Username </th>
                 <th onclick="sortData('count', 'number')">Count</th>
