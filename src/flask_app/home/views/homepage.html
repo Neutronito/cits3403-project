@@ -1,7 +1,40 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container-sm">
-    <h1> Hi </h1>
-</div>
+        <div class="container-sm">
+            <h1 style="text-align:center"> Web Design Game </h1>
+            <p style="text-align:center">Created by Sha, Neutronito & Soul</p>
+
+            <div class = "top">
+                <h4>Description & Purpose</h4>
+                <ul>
+                    <li>The Web Design Game's purpose is to provide individuals with an interactive, fun & professional environment to acquire and practice web design skills including html/css/js</li>
+                    <li>This is achieved by allowing users to complete daily challenges, which are in the form of webpage images/maps, and the aim of the user is to replicate the given image/map
+                        using web design skills.
+                    </li>
+                    <li>The daily maps are uploaded by the admin user resulting in an arbitrary number of maps of various difficulties allowing the game to be used by educational institutions as well as 
+                        individuals</li>
+                    <li>This in turn allows the game to be used for all knowledge levels of web design, and due to the high level of user authentication and secure data storage and retrieval practices 
+                        makes the game secure and reliable </li>
+                    <li>Additionally being able to compete with other users, or simply comparing results is allowed due to an extensive leaderboard system with various sorting mechanisms and time intervals</li>
+                </ul>
+            </div>
+
+            <div class="bottom">
+                <h4>Instructions</h4>
+                <ol>
+                    <li>Before playing the game the user should Login/Signup with their account following the navbar links</li>
+                    <li>After successful authentication, the user should select the "Game" tab and press the "Show Map" button. This will display the current daily challenge</li>
+                    <li>The code should be written inside the text box area, and if at any moment the user wishes to preview what their website/map would look like, pressing the "Preview Map" button
+                        will display it
+                    </li>
+                    <li>Once the user is satisfied with the similarity of their solution with the given map/image, pressing the "Submit" button will submit the users code and provide them with a
+                        score depicting the similarity of their solution with the provided map/image 
+                    </li>
+                    <li>The users score is automatically entered in the database so selecting the "LeaderBoard" button allows the user to view their score in comparison to other users</li>
+                    <li>If the user wishes to share their score, pressing the "Share Score" button will copy their achieved score to the clipboard</li>
+                </ol>
+            </div>
+        </div>
+</div >
 {% endblock %}

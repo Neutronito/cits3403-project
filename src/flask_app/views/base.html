@@ -23,7 +23,7 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-md sticky-top navbar-light bg-light">
+    <nav class="navbar navbar-expand-md sticky-top navbar-light" style="background-color:#8f94fb;">
       <div class="navbar-nav">  
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -32,32 +32,32 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('home.page') }}">Homepage</a>
+                <a class="nav-link" href="{{ url_for('home.page') }}" style="color: white;">Homepage</a>
               </li>
             <li>
               <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('leaderboard.page') }}">Leaderboard</a>
+              <a class="nav-link" href="{{ url_for('leaderboard.page') }}"style="color: white;">Leaderboard</a>
             </li>
             {% if current_user.is_authenticated %}
               {% if current_user.admin %}
               <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('admin.panel') }}">Admin Panel</a>
+                <a class="nav-link" href="{{ url_for('admin.panel') }}"style="color: white;">Admin Panel</a>
                 </li>
               {% endif %}
               <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('game.page') }}">Game</a>
+              <a class="nav-link" href="{{ url_for('game.page') }}"style="color: white;">Game</a>
             </li>
               <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+              <a class="nav-link" href="{{ url_for('auth.logout') }}"style="color: white;">Logout</a>
             </li>
             {% endif %}
             {% if not current_user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+              <a class="nav-link" href="{{ url_for('auth.login') }}"style="color: white;">Login</a>
             </li>
             <li>
               <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('auth.signup') }}">Signup</a>
+              <a class="nav-link" href="{{ url_for('auth.signup') }}"style="color: white;">Signup</a>
             </li>
             {% endif %}
 
@@ -66,13 +66,26 @@
         {% if current_user.is_authenticated %}
         <div id="userIcon">
               <li">
-                  <a><img src = "https://ui-avatars.com/api/?name={{current_user.name}}&rounded=true&bold=true" alt="img" style="max-width: 30px; max-height: 30px"></img> {{current_user.name}}</a>
+                  <a style="color: white;"><img src = "https://ui-avatars.com/api/?name={{current_user.name}}&rounded=true&bold=true" alt="img" style="max-width: 30px; max-height: 30px"></img> {{current_user.name}}</a>
               </li>
         </div>
         {% endif %}
     
       </nav>
-    <div class="container-fluid">
+    <div class="container-fluid" style="padding: 0%;">
+      <div class="area">
+        <ul class="circles">
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+        </ul>
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             {% for message in messages %}
