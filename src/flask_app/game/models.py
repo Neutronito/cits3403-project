@@ -36,7 +36,7 @@ class Map(db.Model):
         self.username = username
         self.html = html
         if date is None:
-            self.date = datetime.utcnow().today()
+            self.date = datetime.utcnow().date()
         else:
             self.date = date
         self.width = width

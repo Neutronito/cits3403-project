@@ -99,7 +99,6 @@ def create_admin_func(username, password) -> bool:
     count_r = game_models.Count(username=username)
     db.session.add(count_r)
     db.session.commit()
-
     return True
 
 

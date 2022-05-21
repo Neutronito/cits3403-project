@@ -1,4 +1,3 @@
-from itertools import count
 from flask import Blueprint, render_template, request, jsonify
 from flask_login import current_user, login_required
 from datetime import datetime
@@ -7,7 +6,7 @@ import os
 from html2image import Html2Image
 import io
 from PIL import Image
-
+from flask import current_app
 from flask_app.auth.controller import admin_required
 
 game = Blueprint('game', __name__, template_folder='views', static_folder='static')
@@ -91,13 +90,17 @@ def count_endpoint():
 def map_endpoint():
     from flask_app import db
     from flask_app.game.models import Map
+    from datetime import date as date_module
     args = request.args
 
     if current_user.admin and 'date' in args:
         try:
             date = datetime.fromisoformat(args['date']).date()
         except ValueError:
-            return "invalid date", 422
+            try:
+                date = date_module.fromisoformat(args['date'])
+            except ValueError:
+                return "invalid date", 422
     else:
         date = None
 
@@ -151,7 +154,13 @@ def map_all_endpoint():
 
 def get_image_binary(html: str, width: int, height: int) -> bytes:
     with TemporaryDirectory() as dp:
-        hti = Html2Image(custom_flags=["--no-sandbox", "--hide-scrollbars"], output_path=dp)
+        kwargs = {}
+        if (browser := current_app.config.get('BROWSER_CLASS')) is not None:
+            kwargs['browser'] = browser
+        kwargs['browser_executable'] = current_app.config.get('BROWSER_EXECUTABLE')
+        kwargs['custom_flags'] = ["--no-sandbox", "--hide-scrollbars"]
+        kwargs['output_path'] = dp
+        hti = Html2Image(**kwargs)
         hti.screenshot(html_str=html, save_as="screenshot.png", size=(width, height))
         with open(os.path.join(dp, "screenshot.png"), 'rb') as fp:
             return fp.read()
@@ -166,6 +175,7 @@ def byes_to_image(data: bytes) -> Image:
 def preview_endpoint():
     import base64
     from flask_app.game.models import Map
+    from datetime import date as date_module
     args = request.args
     if (width := args.get('width', 300)) is not None:
         width = int(width)
@@ -178,7 +188,10 @@ def preview_endpoint():
             try:
                 date = datetime.fromisoformat(args['date']).date()
             except ValueError:
-                return "invalid date", 422
+                try:
+                    date = date_module.fromisoformat(args['date'])
+                except ValueError:
+                    return "invalid date", 422
         else:
             date = None
         the_map = Map.get_map(date)
@@ -202,6 +215,7 @@ def normalize(value: float, skewness: float = 2) -> int:
 def score_endpoint():
     from flask_app.game.models import Map
     from SSIM_PIL import compare_ssim
+    from datetime import date as date_module
     from flask_app import db
 
     body = request.get_data(as_text=True)
@@ -210,7 +224,10 @@ def score_endpoint():
         try:
             date = datetime.fromisoformat(args['date']).date()
         except ValueError:
-            return "invalid date", 422
+            try:
+                date = date_module.fromisoformat(args['date'])
+            except ValueError:
+                return "invalid date", 422
     else:
         date = None
 
