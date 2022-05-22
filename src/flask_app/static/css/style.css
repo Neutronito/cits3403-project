@@ -35,7 +35,7 @@ input[type=text], input[type=password], input[type=number], input[type=date] {
 
 #userIcon{
     position: relative;
-    margin-right: 30px;
+    margin-left: 30px;
     margin-top: 0px;
 }
 
@@ -63,9 +63,8 @@ label.labelStyling{
     margin-bottom: 15px;
 }
 
-@import url('https://fonts.googleapis.com/css?family=Exo:400,700');
 body{
-    font-family: 'Exo', sans-serif;
+    font-family: sans-serif;
     color: black;
     
 }
@@ -106,10 +105,9 @@ body{
     background: #4e54c8;  
     background: -webkit-linear-gradient(to left, #8f94fb, #4e54c8);  
     width: 100%;
-    height: 94.99vh;
+    height: 100vh;
     margin: 0px;
-    
-   
+    overflow: auto;   
 }
 
 .circles{
@@ -120,6 +118,7 @@ body{
     width: 100%;
     height: 100%;
     overflow: hidden;
+    padding-left: 0;
 }
 
 .circles li{
@@ -130,8 +129,7 @@ body{
     height: 20px;
     background: rgba(255, 255, 255, 0.2);
     animation: animate 25s linear infinite;
-    bottom: -150px;
-    
+    bottom: -150px;    
 }
 
 .circles li:nth-child(1){

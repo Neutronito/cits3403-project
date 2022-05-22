@@ -1,3 +1,7 @@
+.nav-link, .nav-tab, .nav-link:hover, .nav-tab:hover {
+    color: white;
+}
+
 table{
     font-family: arial, sans-serif;
     border-collapse: collapse;
@@ -11,10 +15,8 @@ td, th{
 th{
     font-weight: bold;
     text-transform: uppercase;
-}
-
-tr:nth-child(even){
-    background-color: lightgrey;
+    background-color: #8f94fb;
+    color: white;
 }
 
 tr:hover{

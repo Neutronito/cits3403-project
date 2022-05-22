@@ -8,21 +8,15 @@
             Welcome to the Login Page!
         </h1>
     </div>
-    <div class="col-lg-8 offset-lg-2">
-        <p class="standardText" style="text-align:center; margin-top: 40px;">
-            Please enter your username and password to login and see your account activity and
-            information. If you do not have an account, press create new account.
-        </p>
-    </div>
-</div>
-
-<!-- Login forms section -->
-<div class="container-sm" style="padding:0px;">
-    <div class="col-lg-8 offset-lg-2">
-        <br>
+    <p class="standardText" style="text-align:center; margin-top: 40px;">
+        Please enter your username and password to login and see your account activity and
+        information. If you do not have an account, press create new account.
+    </p>
+    <!-- Form Section -->
+    <br>
         <p id="displayLogin" class="standardText"></p>
 
-        <form action="" method="post" novalidate>
+        <form method="post" novalidate style="padding-top: 0px;">
             {{ form.hidden_tag() }}
             <p>
                 <b>{{ form.username.label(class="labelStyling") }}</b><br>
@@ -41,6 +35,5 @@
             <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
             <p>{{ form.submit(class="submitButton") }}</p>
         </form>
-    </div>
 </div>
 {% endblock %}
