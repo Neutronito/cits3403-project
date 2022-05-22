@@ -56,7 +56,7 @@ function initAdminTable() {
                 countInput.type = "number";
                 countInput.inputMode = "numeric";
                 countInput.setAttribute("cits3403-user", element)
-                setAttribute("max",'100');
+                countInput.setAttribute("max",'100');
                 countInput.addEventListener("change", countSubmit)
                 setCountInput("GET","/game/api/count?user=" + element, true, countInput);
                 countDiv.appendChild(countInput);
