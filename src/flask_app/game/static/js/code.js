@@ -4,6 +4,7 @@ var width;
 var date;
 
 function init() {
+    document.getElementById("code").value = "";
     var xhttp = new XMLHttpRequest;
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4) {
@@ -68,4 +69,27 @@ function submit(){
     };
     xhttp.open("POST", `/game/api/score`, true);
     xhttp.send(document.getElementById("code").value);
+}
+
+function setTemplate(){
+    document.getElementById("code").value = 
+    `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <title>My Website</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <style>
+    /*write your css code here*/
+    </style>
+    
+    </head>
+    
+    <body>
+    <!-- write your html code here -->
+    </body>
+    
+    </html>
+    `;
 }
