@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block header %}
-<script type="text/javascript" src="{{ url_for('game.static', filename='js/code.js') }}"></script>
+<script src="{{ url_for('game.static', filename='js/code.js') }}"></script>
 <link rel="stylesheet" href="{{ url_for('game.static', filename='css/code.css') }}">
 {% endblock %}
 
@@ -12,11 +12,11 @@
         <form>
             <textarea id="code" name="code" rows="4" cols="100"></textarea>
         </form>
-        <h3 id="score"></h3>
+        <h3 id="score">0</h3>
         <div class=buttons>
-            <button onclick="showMap()" class="button3">Show Map</a>
-            <button onclick="previewMap()" class="button3">Preview Map</a>
-            <button onclick="submit()" class="button3">Submit </a>
+            <button onclick="showMap()" class="button3">Show Map</button>
+            <button onclick="previewMap()" class="button3">Preview Map</button>
+            <button id="submit-button" onclick="submit()" class="button3">Submit </button>
         </div>
     </div>
 </div>

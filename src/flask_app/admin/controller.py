@@ -31,9 +31,9 @@ def panel():
 
         return redirect(url_for('admin.panel'))
     if request.method == 'GET':
-        return render_template('admin.html', form=form, default_tab="mapTableLink")
+        return render_template('admin.html', form=form, map_active="active", map_show_active="show active")
     elif request.method == 'POST':
-        return render_template('admin.html', form=form, default_tab="addMapLink")
+        return render_template('admin.html', form=form, add_active="active", add_show_active="show active")
 
 @admin.route("/api/user/all", methods=["GET"])
 @login_required

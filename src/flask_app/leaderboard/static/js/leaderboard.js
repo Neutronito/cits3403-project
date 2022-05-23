@@ -14,7 +14,7 @@ window.onload = () => {
     var tabEl = document.querySelectorAll('button[data-bs-toggle="tab"]')
     tabEl.forEach((t) =>{
         t.addEventListener('show.bs.tab', function (event) {
-            tabType = event.target.getAttribute("cits3403-leaderboard-type")
+            tabType = event.target.getAttribute("data-cits3403-leaderboard-type")
             populateData()
         })
     })

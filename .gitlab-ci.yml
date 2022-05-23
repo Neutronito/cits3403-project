@@ -43,9 +43,10 @@ deploy_branch:
         docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH &&
         docker run 
           --rm 
-          -v /var/tmp/flask:/app 
+          -e SECRET_KEY=$(openssl rand -base64 32)
+          -v /var/tmp/flask:/sockets 
           --name cits3403-project-$CI_COMMIT_BRANCH
-          -dt $CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH --bind unix:/app/$CI_ENVIRONMENT_SLUG.socket --log-level=debug"
+          -dt $CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH --bind unix:/sockets/$CI_ENVIRONMENT_SLUG.socket --log-level=debug"
 
   environment:
     name: branch/$CI_COMMIT_BRANCH

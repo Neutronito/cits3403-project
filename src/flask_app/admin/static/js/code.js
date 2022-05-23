@@ -32,7 +32,7 @@ function initAdminTable() {
             userList.forEach((element) => {
                 //Create a new row
                 let newRow = document.createElement("tr");
-                newRow.setAttribute('cits3403-user', element)
+                newRow.setAttribute('data-cits3403-user', element)
                 //Add the name colummn ~~~~~~~~~~~~~~~~~~
                 let nameColumn = document.createElement("td");
                 nameColumn.innerHTML = element;
@@ -41,7 +41,7 @@ function initAdminTable() {
                 //Add the date column ~~~~~~~~~~~~~~~~~~
                 let dateColumn = document.createElement("td");
                 let datePicker = document.createElement("input")
-                datePicker.setAttribute('cits3403-user', element)
+                datePicker.setAttribute('data-cits3403-user', element)
                 datePicker.setAttribute('type', 'date')
                 datePicker.valueAsDate = todayUTC;
                 datePicker.setAttribute('max', todayUTC.toISOString().slice(0, -14));
@@ -55,7 +55,7 @@ function initAdminTable() {
                 let countCell  = document.createElement("td");
                 countInput.type = "number";
                 countInput.inputMode = "numeric";
-                countInput.setAttribute("cits3403-user", element)
+                countInput.setAttribute("data-cits3403-user", element)
                 countInput.addEventListener("change", countSubmit)
                 setCountInput("GET","/game/api/count?user=" + element, true, countInput);
                 countDiv.appendChild(countInput);
@@ -81,7 +81,7 @@ function initAdminTable() {
                 user.value = "User";
                 user.innerHTML = "User";
                 roleSelect.appendChild(user);
-                roleSelect.setAttribute("cits3403-user", element)
+                roleSelect.setAttribute("data-cits3403-user", element)
                 setRoleStatus(roleSelect, element);
                 roleSelect.addEventListener("change", roleChanged);
 
@@ -94,19 +94,19 @@ function initAdminTable() {
 
                 let deleteButton = document.createElement("button");
                 deleteButton.innerHTML = "Delete";
-                deleteButton.setAttribute("cits3403-user", element)
+                deleteButton.setAttribute("data-cits3403-user", element)
                 deleteButton.addEventListener("click", deletePressed);
                 // Style button
                 deleteButton.classList.add("tableButton");
                 deleteButton.classList.add("btn-primary");
-                
+
                 deleteCell.appendChild(deleteButton);
 
                 newRow.appendChild(deleteCell);
 
                 //Add the new user row to the table
                 adminTable.appendChild(newRow);
-            });    
+            });
         }
     };
 
@@ -122,7 +122,7 @@ function DateChange(user, countCell, date) {
 
 function countSubmit() {
     let countCell = this;
-    let user = countCell.getAttribute('cits3403-user');
+    let user = countCell.getAttribute('data-cits3403-user');
     let integerCount = parseInt(countCell.value);
     let date = countCell.getAttribute('cits3403-date');
 
@@ -173,13 +173,13 @@ function setRoleStatus(roleSelect, user) {
 }
 
 function roleChanged() {
-    setUsersRole(this, this.getAttribute('cits3403-user'), this.value);
+    setUsersRole(this, this.getAttribute('data-cits3403-user'), this.value);
 }
 function setUsersRole(roleSelect, user, value) {
-    
+
     let setAdminStatus = (value === "Admin");
     if (setAdminStatus) {
-        var promptText = "Warning, this will make " + user + " admin. Are you sure you wish to continue? If so, type in their username." 
+        var promptText = "Warning, this will make " + user + " admin. Are you sure you wish to continue? If so, type in their username."
     } else {
         var promptText = "Warning, this will remove admin from " + user + ". Are you sure you wish to continue? If so, type in their username"
     }
@@ -200,13 +200,13 @@ function setUsersRole(roleSelect, user, value) {
         }
     }
     xhttp.open("PUT", "/admin/api/user/admin?user=" + user + "&adminFlag=" + setAdminStatus);
-    xhttp.send(); 
+    xhttp.send();
 
 }
 
 function deletePressed() {
-    let user = this.getAttribute('cits3403-user')
-    deleteUser(user, document.querySelector(`tr[cits3403-user='${user}']`));
+    let user = this.getAttribute('data-cits3403-user')
+    deleteUser(user, document.querySelector(`tr[data-cits3403-user='${user}']`));
 }
 
 function deleteUser(user, currentRow) {
@@ -325,7 +325,7 @@ function htmlPressed() {
         if (this.readyState == 4 && this.status == 200) {
             let html = JSON.parse(this.responseText).html
             let newWindow = window.open();
-            newWindow.document.write(`<textarea readonly style="width:100%;height:100%">${html}</textarea>`);
+            newWindow.document.write(`<title>HTML Code Preview</title> \n <textarea readonly style="width:100%;height:100%">${html}</textarea>`);
         }
     };
 
@@ -344,7 +344,7 @@ function imgPressed() {
         if (this.readyState == 4 && this.status == 200) {
             let newWindow = window.open();
             let encodedImg = JSON.parse(this.responseText).data;
-            newWindow.document.write(`<img src="data:image/png;base64,${encodedImg}" />`);
+            newWindow.document.write(`<title>Image Preview</title> \n <img src="data:image/png;base64,${encodedImg}" />`);
         }
     };
     xhttp.open("GET", `/game/api/preview?date=${mapID}&width=${width}&height=${height}`, true);

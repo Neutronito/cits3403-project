@@ -8,51 +8,44 @@
             Welcome to the Signup Page!
         </h1>
     </div>
-    <div class="col-lg-8 offset-lg-2">
-        <p class="standardText" style="padding-top:40px;">
-            Please register yourself
+    <p class="standardText" style="text-align:center; margin-top: 40px;">
+        Please create an account to play the game.
+    </p>
+
+    <br>
+    <p id="displayLogin" class="standardText"></p>
+
+    <!-- Form Section -->
+    <form method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            <b>{{ form.username.label(class="labelStyling") }}</b><br>
+            {{ form.username(size=512, placeholder="Please enter your username") }}
+            {% for error in form.username.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
         </p>
-    </div>
-</div>
-
-<!-- Login forms section -->
-<div class="container-sm">
-    <div class="col-lg-8 offset-lg-2">
-        <br>
-        <p id="displayLogin" class="standardText"></p>
-
-        <form action="" method="post" novalidate>
-            {{ form.hidden_tag() }}
-            <p>
-                <b>{{ form.username.label(class="labelStyling") }}</b><br>
-                {{ form.username(size=512, placeholder="Please enter your username") }}
-                {% for error in form.username.errors %}
-                <span style="color: red;">{{ error }}</span>
-                {% endfor %}
-            </p>
-            <p>
-                <b>{{ form.password.label(class="labelStyling") }}</b><br>
-                {{ form.password(size=512,  placeholder="Please enter your password") }}
-                {% for error in form.password.errors %}
-                <span style="color: red;">{{ error }}</span>
-                {% endfor %}
-            </p>
-            <p>
-                <b>{{ form.confirm.label(class="labelStyling") }}</b><br>
-                {{ form.confirm(size=512,  placeholder="Please re-enter your password") }}
-                {% for error in form.confirm.errors %}
-                <span style="color: red;">{{ error }}</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.accept_tos }} I accept the <a href="{{ url_for('auth.tos') }}"> terms of service</a>
-                {% for error in form.accept_tos.errors %}
-                <span style="color: red;">{{ error }}</span>
-                {% endfor %}
-            </p>
-            <p>{{ form.submit(class="submitButton") }}</p>
-        </form>
-
-    </div>
+        <p>
+            <b>{{ form.password.label(class="labelStyling") }}</b><br>
+            {{ form.password(size=512,  placeholder="Please enter your password") }}
+            {% for error in form.password.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+        <p>
+            <b>{{ form.confirm.label(class="labelStyling") }}</b><br>
+            {{ form.confirm(size=512,  placeholder="Please re-enter your password") }}
+            {% for error in form.confirm.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.accept_tos }} I accept the <a href="{{ url_for('auth.tos') }}"> terms of service</a>
+            {% for error in form.accept_tos.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit(class="submitButton") }}</p>
+    </form>
 </div>
 {% endblock %}

@@ -2,7 +2,7 @@
 
 {% block header %}
 <!-- Import JS -->
-<script type="text/javascript" src="{{ url_for('admin.static', filename='js/code.js') }}"></script>
+<script src="{{ url_for('admin.static', filename='js/code.js') }}"></script>
 
 <!-- Import CSS -->
 <link rel="stylesheet" href="{{ url_for('admin.static', filename='css/style.css') }}">
@@ -11,19 +11,21 @@
 {% block content %}
 <!-- Page heading and description -->
 <div class="container-sm">
-        <div class="tab">
-            <button class="tablinks" onclick="openTab(event, 'userTableTab')" id = "userTableLink">Table of Users</button>
-            <button class="tablinks" onclick="openTab(event, 'mapTableTab')" id = "mapTableLink">Table of Maps</button>
-            <button class="tablinks" onclick="openTab(event, 'addMapTab')" id = "addMapLink">Add a New Map</button>
-        </div>
+    <div class="nav nav-tabs justify-content-center" id="nav-tab" role="tablist" >
+        <button class="nav-link {{user_active}}" id="nav-user-tab" data-bs-toggle="tab" data-bs-target="#nav-user" type="button" role="tab" aria-controls="nav-user" aria-selected="true">Users</button>
+        <button class="nav-link {{map_active}}" id="nav-map-tab" data-bs-toggle="tab" data-bs-target="#nav-map" type="button" role="tab" aria-controls="nav-map" aria-selected="false">Maps</button>
+        <button class="nav-link {{add_active}}" id="nav-add-tab" data-bs-toggle="tab" data-bs-target="#nav-add" type="button" role="tab" aria-controls="nav-add" aria-selected="false">Add Map</button>
+    </div>
         
-        <!-- Tab content -->
-        <div id="userTableTab" class="tabcontent">
+    <!-- Tab content -->
+    <div class="tab-content" id="nav-tabContent">
+
+        <div class="tab-pane fade {{user_show_active}}" id="nav-user" role="tabpanel" aria-labelledby="nav-user-tab">
             <h1 class="standardText heading text-center">
                 This is a list of all our users
             </h1>
             <!-- Refresh the list of users button -->
-            <table id="adminTable" class="standardTable">
+            <table id="adminTable">
                 <tr>
                     <th>Name</th>
                     <th>Date</th>
@@ -34,12 +36,12 @@
             </table>
         </div>
         
-        <div id="mapTableTab" class="tabcontent">
+        <div class="tab-pane fade {{map_show_active}}" id="nav-map" role="tabpanel" aria-labelledby="nav-map-tab">
             <h1 class="standardText heading text-center">
                 This is a list of all our maps
             </h1>
             <!-- Refresh the list of users button -->
-            <table id="mapTable" class="standardTable">
+            <table id="mapTable">
                 <tr>
                     <th>Date</th>
                     <th>Author</th>
@@ -50,12 +52,12 @@
             </table>
         </div>
         
-        <div id="addMapTab" class="tabcontent">
-            <form action="" method="post" novalidate>
+        <div class="tab-pane fade {{add_show_active}}" id="nav-add" role="tabpanel" aria-labelledby="nav-add-tab">
+            <form method="post" novalidate>
                 {{ form.hidden_tag() }}
                 <p>
                     <b>{{ form.map.label(class="labelStyling") }}</b><br>
-                    {{ form.map(size=32) }}
+                    {{ form.map() }}
                     {% for error in form.map.errors %}
                     <span style="color: red;">[{{ error }}]</span>
                     {% endfor %}
@@ -63,7 +65,7 @@
 
                 <p>
                     <b>{{ form.width.label(class="labelStyling") }}</b><br>
-                    {{ form.width(size=32) }}
+                    {{ form.width() }}
                     {% for error in form.width.errors %}
                     <span style="color: red;">[{{ error }}]</span>
                     {% endfor %}
@@ -71,7 +73,7 @@
 
                 <p>
                     <b>{{ form.height.label(class="labelStyling") }}</b><br>
-                    {{ form.height(size=32) }}
+                    {{ form.height() }}
                     {% for error in form.height.errors %}
                     <span style="color: red;">[{{ error }}]</span>
                     {% endfor %}
@@ -79,7 +81,7 @@
                 
                 <p>
                     <b>{{ form.date.label(class="labelStyling") }}</b><br>
-                    {{ form.date(size=32) }}
+                    {{ form.date() }}
                     {% for error in form.date.errors %}
                     <span style="color: red;">[{{ error }}]</span>
                     {% endfor %}
@@ -90,11 +92,11 @@
                 <p>{{ form.submit(class="submitButton standardButton btn btn-success btn-lg") }}</p>
             </form>
         </div>
+    </div>
 </div>
 
 <!-- Body onload -->
 <script>
-    document.getElementById("{{ default_tab }}").click();
     initAdminTable();
     initMapTable();
     initAddMap();
