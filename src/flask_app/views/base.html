@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>County</title>
+    <title>Web Dev Game</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
 
     <!-- CSS -->
@@ -20,16 +20,12 @@
      <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
     {% block header %}{% endblock %}
 </head>
-<body>
+<body style="background-color: #4e54c8;">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-md sticky-top navbar-light" style="background-color:#8f94fb;">
+    <nav class="navbar navbar-expand-md sticky-top navbar-light">
       {% if current_user.is_authenticated %}
       <div id="userIcon">
-          <ul>
-            <li>
-                <a style="color: white;"><img src = "https://ui-avatars.com/api/?name={{current_user.name}}&rounded=true&bold=true" alt="img" style="max-width: 30px; max-height: 30px"> {{current_user.name}}</a>
-            </li>
-          </ul>
+        <a style="color: white;"><img src = "https://ui-avatars.com/api/?name={{current_user.name}}&rounded=true&bold=true" alt="img" style="max-width: 30px; max-height: 30px"> {{current_user.name}}</a>
       </div>
       {% endif %}
       <div class="navbar-nav">  

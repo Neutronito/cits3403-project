@@ -30,6 +30,18 @@ function init() {
     }
     topScoreXhttp.open("GET", "/game/api/count", true);
     topScoreXhttp.send("");
+
+    document.getElementById("buttonShare").addEventListener("click", async () => {
+        return $.ajax({
+            url: '/game/api/count' + "?" + jQuery.param(null),
+            type: 'GET',
+            success: function (d) {
+                let userScore = d["count"];
+                navigator.clipboard.writeText(userScore);
+                alert(`Copied your score of ${userScore} to the clipboard.`)
+            }
+        })
+    })
 }
 
 function showMap(){
