@@ -56,7 +56,6 @@ function initAdminTable() {
                 countInput.type = "number";
                 countInput.inputMode = "numeric";
                 countInput.setAttribute("cits3403-user", element)
-                countInput.setAttribute("max",'100');
                 countInput.addEventListener("change", countSubmit)
                 setCountInput("GET","/game/api/count?user=" + element, true, countInput);
                 countDiv.appendChild(countInput);
@@ -129,13 +128,15 @@ function countSubmit() {
 
     let amount = integerCount - countCell.placeholder;
 
-    if (amount > 0) {
-        var action = "increment";
-    } else if (amount < 0) {
-        var action = "decrement";
-        amount *= -1;
-    } else {
-        return
+    if(integerCount <= 100){
+        if (amount > 0) {
+            var action = "increment";
+        } else if (amount < 0) {
+            var action = "decrement";
+            amount *= -1;
+        } else {
+            return
+        }
     }
 
     setCountInput("POST", `/game/api/count?user=${user}&action=${action}&amount=${amount}&date=${date}`, true, countCell)
