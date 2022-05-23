@@ -128,16 +128,17 @@ function countSubmit() {
 
     let amount = integerCount - countCell.placeholder;
 
-    if (amount > 0) {
-        var action = "increment";
-    } else if (amount < 0) {
-        var action = "decrement";
-        amount *= -1;
-    } else {
-        return
+    if(integerCount <= 100){
+        if (amount > 0) {
+            var action = "increment";
+        } else if (amount < 0) {
+            var action = "decrement";
+            amount *= -1;
+        } else {
+            return
+        }
+        setCountInput("POST", `/game/api/count?user=${user}&action=${action}&amount=${amount}&date=${date}`, true, countCell)
     }
-
-    setCountInput("POST", `/game/api/count?user=${user}&action=${action}&amount=${amount}&date=${date}`, true, countCell)
 }
 
 function setCountInput(type, path, async, countCell) {
