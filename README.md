@@ -128,6 +128,14 @@ docker run --rm --entrypoint pytest -it cits3403-project
 ```
 
 
+# Gitflow
+The workflow is like the following
+1 - create an issue
+2 - create a merge request
+3 - squash the branch commits
+4 - merge with master
+
+
 # FAQ
 ## Where Is the requirements.txt File?
 We used poetry, which uses [pyproject.toml](pyproject.toml) and [poetry.lock](poetry.lock) to get the correct dependencies.
