@@ -65,6 +65,13 @@ It also contains some api calls to obtain information from the database and allo
 The easiest way to play our game is on our domain, which can be found at [CITS3403.com](https://cits3403.com). This requires no setup, all you need to do is create an account and you can play the game.
 However, there is a chance there will be no map for the day, as we are not actively maintaining the site and adding maps in. You may add in your own maps through the admin account, which has a username admin and password admin.
 
+## Note on browser dependency
+You will need chromium and chromium driver. If things did not work you can export the following environment variables
+```shell
+export BROWSER_CLASS=CHROME  # specify the class, it has been tested with chrome and chromium
+export BROWSER_EXECUTABLE=/usr/bin/chromedriver  # double check the path of your driver
+```
+
 ## Using Python Virtual Environment
 ```shell
 git clone https://gitlab.com/qdog/cits3403-project.git

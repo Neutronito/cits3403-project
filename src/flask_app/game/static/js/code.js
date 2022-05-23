@@ -15,6 +15,7 @@ function init() {
                 date = obj.date;
                 } else if (this.status == 204) {
                     alert("Sorry, there is no map to play today.");
+                    window.location.href = "/";
                 }
             }
     }
