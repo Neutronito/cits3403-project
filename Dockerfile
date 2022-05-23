@@ -35,5 +35,6 @@ RUN apt-get update \
 COPY --from=builder /venv /venv
 ENV PATH /venv/bin:$PATH
 COPY tests .
-COPY docker-entrypoint.sh .
+COPY docker-entrypoint.sh . 
+COPY pyproject.toml .
 ENTRYPOINT ["sh", "docker-entrypoint.sh"]
