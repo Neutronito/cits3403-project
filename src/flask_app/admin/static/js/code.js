@@ -137,9 +137,9 @@ function countSubmit() {
         } else {
             return
         }
+        setCountInput("POST", `/game/api/count?user=${user}&action=${action}&amount=${amount}&date=${date}`, true, countCell)
     }
-
-    setCountInput("POST", `/game/api/count?user=${user}&action=${action}&amount=${amount}&date=${date}`, true, countCell)
+    else{return;}
 }
 
 function setCountInput(type, path, async, countCell) {
